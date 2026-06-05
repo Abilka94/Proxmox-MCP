@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "mcp-proxmox": {
+      "command": "python",
+      "args": ["-m", "mcp_proxmox"],
+      "env": {
+        "MCP_PROXMOX_CONFIG": "config/default.yaml",
+        "PVE_HOST": "https://pve.example.local:8006",
+        "PVE_TOKEN_ID": "root@pam!mcp-proxmox",
+        "PVE_TOKEN_SECRET": "replace-me"
+      }
+    }
+  }
+}

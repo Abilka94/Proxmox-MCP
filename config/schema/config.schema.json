@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcp-proxmox.local/config.schema.json",
+  "title": "MCP-Proxmox configuration",
+  "type": "object",
+  "required": ["connection", "policy", "orchestrator", "cache", "logging", "audit"],
+  "properties": {
+    "connection": {
+      "type": "object",
+      "required": ["id", "host", "token_id", "token_secret", "verify_ssl"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "host": { "type": "string", "minLength": 1 },
+        "token_id": { "type": "string", "minLength": 1 },
+        "token_secret": { "type": "string", "minLength": 1 },
+        "verify_ssl": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["mode", "memory"],
+      "properties": {
+        "mode": { "const": "READ_ONLY" },
+        "memory": {
+          "type": "object",
+          "required": ["allow_write"],
+          "properties": {
+            "allow_write": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "orchestrator": {
+      "type": "object",
+      "required": [
+        "max_concurrent_per_node",
+        "max_concurrent_cluster",
+        "node_request_timeout_sec",
+        "aggregate_threshold"
+      ],
+      "properties": {
+        "max_concurrent_per_node": { "type": "integer", "minimum": 1 },
+        "max_concurrent_cluster": { "type": "integer", "minimum": 1 },
+        "node_request_timeout_sec": { "type": "integer", "minimum": 1 },
+        "aggregate_threshold": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "cache": {
+      "type": "object",
+      "required": ["cluster_resources_ttl_sec", "node_status_ttl_sec"],
+      "properties": {
+        "cluster_resources_ttl_sec": { "type": "integer", "minimum": 0 },
+        "node_status_ttl_sec": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "logging": {
+      "type": "object",
+      "required": ["level", "format"],
+      "properties": {
+        "level": { "enum": ["DEBUG", "INFO", "WARNING", "ERROR"] },
+        "format": { "enum": ["json", "console"] }
+      },
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "subsystems": {
+      "type": "object",
+      "properties": {
+        "logs": {
+          "type": "object",
+          "required": ["enabled", "max_lines"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "max_lines": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

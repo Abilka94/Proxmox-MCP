@@ -1,0 +1,33 @@
+connection:
+  id: "local"
+  host: "${PVE_HOST}"
+  token_id: "${PVE_TOKEN_ID}"
+  token_secret: "${PVE_TOKEN_SECRET}"
+  verify_ssl: true
+
+policy:
+  mode: READ_ONLY
+  memory:
+    allow_write: true
+
+orchestrator:
+  max_concurrent_per_node: 5
+  max_concurrent_cluster: 15
+  node_request_timeout_sec: 30
+  aggregate_threshold: 500
+
+cache:
+  cluster_resources_ttl_sec: 30
+  node_status_ttl_sec: 15
+
+logging:
+  level: INFO
+  format: console
+
+audit:
+  path: "data/audit.log"
+
+subsystems:
+  logs:
+    enabled: true
+    max_lines: 500

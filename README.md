@@ -1,0 +1,26 @@
+# MCP-Proxmox
+
+AI Infrastructure Operator for Proxmox VE, exposed as a Model Context Protocol
+(MCP) server.
+
+Status: local Phase 1A bootstrap. The project skeleton is in place; runtime
+MCP tools are implemented in later Phase 1A tasks.
+
+## Documentation
+
+- [Documentation index](docs/README.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Implementation package](docs/implementation/IMPLEMENTATION_PACKAGE.md)
+- [Phase 1A task plan](docs/implementation/PHASE_1A_TASK_PLAN.md)
+
+## Development
+
+```powershell
+python -m pip install -e ".[dev]"
+python -m pytest
+python -m ruff check .
+python -m mypy src
+```
+
+The first runnable MCP stdio server lands in T-104 after config, policy, and
+registry scaffolding are implemented.
