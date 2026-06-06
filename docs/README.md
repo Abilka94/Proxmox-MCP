@@ -1,7 +1,7 @@
 # MCP-Proxmox — Documentation Index
 
-**Текущая фаза:** Phase 1B.1 — завершена (2026-06-06)  
-**Следующая фаза:** Phase 1B.2 — Task Domain Extended (polling)
+**Текущая фаза:** Phase 1B.2 — ACCEPTED (v0.3.0-phase1b.2)  
+**Следующая фаза:** Phase 1C — Task Mutate
 
 ---
 
@@ -13,6 +13,7 @@
 | [architecture/MEMORY_KNOWLEDGE_MODEL.md](architecture/MEMORY_KNOWLEDGE_MODEL.md) v1.0 | Memory, Service, EntityRef, traverse |
 | [adr/ADR_INDEX.md](adr/ADR_INDEX.md) | Индекс архитектурных решений (ADR) |
 | [releases/IMPLEMENTATION_ROADMAP.md](releases/IMPLEMENTATION_ROADMAP.md) | Фазы 1A–6, MVP |
+| [architecture/REFERENCE_USAGE_POLICY.md](architecture/REFERENCE_USAGE_POLICY.md) | Правила использования reference-репозиториев |
 
 ## Phase 1A — Infrastructure Read Layer
 
@@ -32,9 +33,14 @@
 | Validation | [LIVE_VALIDATION_PLAN](phase-1b/phase-1b.1/validation/PHASE_1B_LIVE_VALIDATION_PLAN.md), [LIVE_VALIDATION_REPORT](phase-1b/phase-1b.1/validation/PHASE_1B_LIVE_VALIDATION_REPORT.md), [VALIDATION_REMEDIATION](phase-1b/phase-1b.1/validation/PHASE_1B_VALIDATION_REMEDIATION_REPORT.md), [CONNECTIVITY_INVESTIGATION](phase-1b/phase-1b.1/validation/PHASE_1B_CONNECTIVITY_INVESTIGATION.md) |
 | Acceptance | [PHASE_1B_ACCEPTANCE](phase-1b/phase-1b.1/acceptance/PHASE_1B_ACCEPTANCE.md) |
 
-## Phase 1B.2 — Task Domain Extended *(future)*
+## Phase 1B.2 — Task Domain Extended
 
-Docs: `docs/phase-1b/phase-1b.2/` (placeholder)
+| Подраздел | Документы |
+|-----------|-----------|
+| Design | [PHASE_1B_2_DESIGN](phase-1b/phase-1b.2/design/PHASE_1B_2_DESIGN.md) |
+| Implementation | [IMPLEMENTATION_REPORT](phase-1b/phase-1b.2/implementation/PHASE_1B_2_IMPLEMENTATION_REPORT.md), [LIVE_VALIDATION_PLAN](phase-1b/phase-1b.2/implementation/PHASE_1B_2_LIVE_VALIDATION_PLAN.md) |
+| Validation | [LIVE_VALIDATION_REPORT](phase-1b/phase-1b.2/validation/PHASE_1B_2_LIVE_VALIDATION_REPORT.md), [CONNECTIVITY_CHECK](phase-1b/phase-1b.2/validation/PRE_VALIDATION_CONNECTIVITY_CHECK.md) |
+| Acceptance | [PHASE_1B_2_ACCEPTANCE](phase-1b/phase-1b.2/acceptance/PHASE_1B_2_ACCEPTANCE.md) |
 
 ## Phase 1C — Task Mutate *(future)*
 
@@ -46,5 +52,6 @@ Docs: `docs/phase-1c/` (placeholder)
 |--------|-----------|
 | Reports | [CODEBASE_AUDIT](archive/CODEBASE_AUDIT_REPORT.md), [COMPETITIVE_ANALYSIS](archive/COMPETITIVE_ANALYSIS.md), [CONFIGURATION_DISCOVERY](archive/CONFIGURATION_DISCOVERY_REPORT.md) |
 | Reviews | [ARCHITECTURE_REVIEW_2026-06-03](archive/reviews/ARCHITECTURE_REVIEW_2026-06-03.md), [INDEPENDENT_PROJECT_REVIEW](archive/reviews/INDEPENDENT_PROJECT_REVIEW.md) |
-| Audit | [DOCUMENTATION_AUDIT](archive/DOCUMENTATION_AUDIT.md), [DOCUMENTATION_CLEANUP_PLAN](archive/DOCUMENTATION_CLEANUP_PLAN.md) |
+| Audit | [DOCUMENTATION_AUDIT](archive/DOCUMENTATION_AUDIT.md), [DOCUMENTATION_CLEANUP_PLAN](archive/DOCUMENTATION_CLEANUP_PLAN.md), [REFERENCE_USAGE_AUDIT](archive/REFERENCE_USAGE_AUDIT.md) |
+| Refresh | [README_REFRESH_PLAN](archive/README_REFRESH_PLAN.md), [README_REFRESH_REPORT](archive/README_REFRESH_REPORT.md) |
 | Recommendations | [ARCHITECTURE_UPDATE_RECOMMENDATIONS](archive/recommendations/ARCHITECTURE_UPDATE_RECOMMENDATIONS.md) |
