@@ -521,6 +521,94 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
 
+    async def test_task_wait_returns_status(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 33,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_wait",
+                    "arguments": {"upid": "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:"},
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["status"], "stopped")
+        self.assertEqual(payload["exitstatus"], "OK")
+        self.assertTrue(payload["completed"])
+
+    async def test_task_wait_missing_upid(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 34,
+                "method": "tools/call",
+                "params": {"name": "task_wait", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
+    async def test_task_follow_returns_status_and_log(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 35,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_follow",
+                    "arguments": {
+                        "upid": "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:",
+                        "node": "pve1",
+                    },
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["status"], "stopped")
+        self.assertEqual(payload["exitstatus"], "OK")
+        self.assertTrue(payload["completed"])
+        self.assertIn("lines", payload)
+        self.assertGreater(payload["total_lines"], 0)
+
+    async def test_task_follow_missing_upid(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 36,
+                "method": "tools/call",
+                "params": {"name": "task_follow", "arguments": {"node": "pve1"}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
+    async def test_task_follow_missing_node(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 37,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_follow",
+                    "arguments": {"upid": "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:"},
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
     # Update tools
 
     async def test_node_updates_returns_updates(self) -> None:

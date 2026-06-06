@@ -12,7 +12,7 @@ from mcp_proxmox.domains.containers import container_config, container_list, con
 from mcp_proxmox.domains.network import network_list
 from mcp_proxmox.domains.nodes import list_nodes, node_status
 from mcp_proxmox.domains.storage import storage_content, storage_list, storage_status
-from mcp_proxmox.domains.tasks import task_list, task_log, task_status
+from mcp_proxmox.domains.tasks import task_follow, task_list, task_log, task_status, task_wait
 from mcp_proxmox.domains.updates import cluster_updates, node_updates
 from mcp_proxmox.domains.vms import vm_config, vm_list, vm_status
 from mcp_proxmox.policy import ToolPolicy, ToolTier
@@ -40,6 +40,8 @@ ALL_TOOLS = [
     "task_list",
     "task_status",
     "task_log",
+    "task_wait",
+    "task_follow",
 ]
 
 
@@ -213,6 +215,33 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
             upid,
             node,
             start=params.get("start"),
+        )
+
+    async def task_wait_tool(params: dict[str, Any]) -> dict[str, Any]:
+        upid = params.get("upid")
+        if not isinstance(upid, str) or not upid:
+            return {"error": "upid is required"}
+        return await task_wait(
+            pve_client,
+            upid,
+            node=params.get("node"),
+            timeout=params.get("timeout", 120),
+            poll_interval=params.get("poll_interval", 1.0),
+        )
+
+    async def task_follow_tool(params: dict[str, Any]) -> dict[str, Any]:
+        upid = params.get("upid")
+        node = params.get("node")
+        if not isinstance(upid, str) or not upid:
+            return {"error": "upid is required"}
+        if not isinstance(node, str) or not node:
+            return {"error": "node is required"}
+        return await task_follow(
+            pve_client,
+            upid,
+            node,
+            timeout=params.get("timeout", 120),
+            poll_interval=params.get("poll_interval", 1.0),
         )
 
     return ToolRegistry(
@@ -510,6 +539,68 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
                 },
                 policy=ToolPolicy(name="task_log", tier=ToolTier.READ),
                 handler=task_log_tool,
+            ),
+            ToolDefinition(
+                name="task_wait",
+                description="Poll task_status until the task completes or timeout.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "upid": {
+                            "type": "string",
+                            "description": "UPID of the task to wait for",
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node hint (recommended for cross-node UPIDs)",
+                        },
+                        "timeout": {
+                            "type": "integer",
+                            "description": "Maximum seconds to wait (default 120, max 3600)",
+                            "default": 120,
+                        },
+                        "poll_interval": {
+                            "type": "number",
+                            "description": "Seconds between status checks (default 1.0)",
+                            "default": 1.0,
+                        },
+                    },
+                    "required": ["upid"],
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_wait", tier=ToolTier.READ),
+                handler=task_wait_tool,
+            ),
+            ToolDefinition(
+                name="task_follow",
+                description="Poll task_status + task_log until complete. Returns status + log.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "upid": {
+                            "type": "string",
+                            "description": "UPID of the task to follow",
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node where the task runs (required for log access)",
+                        },
+                        "timeout": {
+                            "type": "integer",
+                            "description": "Maximum seconds to wait (default 120, max 3600)",
+                            "default": 120,
+                        },
+                        "poll_interval": {
+                            "type": "number",
+                            "description": "Seconds between poll cycles (default 1.0)",
+                            "default": 1.0,
+                        },
+                    },
+                    "required": ["upid", "node"],
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_follow", tier=ToolTier.READ),
+                handler=task_follow_tool,
             ),
         ]
     )

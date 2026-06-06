@@ -6,7 +6,6 @@ from unittest.mock import AsyncMock
 from mcp_proxmox.domains.updates import cluster_updates, node_updates
 from mcp_proxmox.pve.models.responses import (
     ClusterUpdateEntry,
-    NodeInfo,
     NodeUpdateEntry,
 )
 
