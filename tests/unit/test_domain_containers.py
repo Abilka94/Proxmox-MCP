@@ -3,14 +3,15 @@ from __future__ import annotations
 import unittest
 from unittest.mock import AsyncMock
 
-from mcp_proxmox.domains.containers import container_list, container_status
-from mcp_proxmox.pve.models.responses import LxcResource, LxcStatus
+from mcp_proxmox.domains.containers import container_config, container_list, container_status
+from mcp_proxmox.pve.models.responses import LxcConfig, LxcResource, LxcStatus
 
 
 class MockPveClient:
     def __init__(self) -> None:
         self.get_containers = AsyncMock()
         self.get_container_status = AsyncMock()
+        self.get_container_config = AsyncMock()
 
 
 class ContainerDomainTests(unittest.IsolatedAsyncioTestCase):
@@ -63,6 +64,35 @@ class ContainerDomainTests(unittest.IsolatedAsyncioTestCase):
         await container_status(client, "pve2", 301)
 
         client.get_container_status.assert_awaited_once_with("pve2", 301)
+
+    async def test_container_config_returns_full_config(self) -> None:
+        client = MockPveClient()
+        client.get_container_config.return_value = LxcConfig(
+            hostname="ubuntu-ct",
+            vmid=300,
+            cores=2,
+            memory=2048,
+            swap=512,
+            ostype="ubuntu",
+            rootfs="local-lvm:8",
+            tags="dev;ubuntu",
+        )
+
+        result = await container_config(client, "pve1", 300)
+
+        self.assertEqual(result["hostname"], "ubuntu-ct")
+        self.assertEqual(result["cores"], 2)
+        self.assertEqual(result["memory"], 2048)
+        self.assertEqual(result["ostype"], "ubuntu")
+        self.assertEqual(result["rootfs"], "local-lvm:8")
+
+    async def test_container_config_passes_params(self) -> None:
+        client = MockPveClient()
+        client.get_container_config.return_value = LxcConfig(vmid=301)
+
+        await container_config(client, "pve2", 301)
+
+        client.get_container_config.assert_awaited_once_with("pve2", 301)
 
 
 if __name__ == "__main__":

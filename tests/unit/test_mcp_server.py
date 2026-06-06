@@ -186,6 +186,35 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
 
+    async def test_vm_config_returns_config(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 13,
+                "method": "tools/call",
+                "params": {"name": "vm_config", "arguments": {"node": "pve1", "vmid": 100}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["name"], "web")
+        self.assertEqual(payload["cores"], 4)
+
+    async def test_vm_config_missing_params(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 14,
+                "method": "tools/call",
+                "params": {"name": "vm_config", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
     # Container tools
 
     async def test_container_list_returns_containers(self) -> None:
@@ -224,6 +253,35 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
                 "id": 15,
                 "method": "tools/call",
                 "params": {"name": "container_status", "arguments": {"node": "pve1"}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
+    async def test_container_config_returns_config(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 16,
+                "method": "tools/call",
+                "params": {"name": "container_config", "arguments": {"node": "pve1", "vmid": 300}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["hostname"], "ubuntu-ct")
+        self.assertEqual(payload["cores"], 2)
+
+    async def test_container_config_missing_params(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 17,
+                "method": "tools/call",
+                "params": {"name": "container_config", "arguments": {}},
             }
         )
 
@@ -278,13 +336,42 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
 
+    async def test_storage_content_returns_items(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 19,
+                "method": "tools/call",
+                "params": {"name": "storage_content", "arguments": {"node": "pve1", "storage": "local"}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["count"], 1)
+        self.assertEqual(payload["items"][0]["volid"], "local:iso/test.iso")
+
+    async def test_storage_content_missing_params(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20,
+                "method": "tools/call",
+                "params": {"name": "storage_content", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
     # Network tools
 
     async def test_network_list_returns_interfaces(self) -> None:
         response = await self.server.handle_message(
             {
                 "jsonrpc": "2.0",
-                "id": 19,
+                "id": 21,
                 "method": "tools/call",
                 "params": {"name": "network_list", "arguments": {"node": "pve1"}},
             }
@@ -298,7 +385,7 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         response = await self.server.handle_message(
             {
                 "jsonrpc": "2.0",
-                "id": 20,
+                "id": 22,
                 "method": "tools/call",
                 "params": {"name": "network_list", "arguments": {}},
             }
@@ -314,7 +401,7 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         response = await self.server.handle_message(
             {
                 "jsonrpc": "2.0",
-                "id": 21,
+                "id": 23,
                 "method": "tools/call",
                 "params": {"name": "node_updates", "arguments": {"node": "pve1"}},
             }
@@ -328,7 +415,7 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         response = await self.server.handle_message(
             {
                 "jsonrpc": "2.0",
-                "id": 22,
+                "id": 24,
                 "method": "tools/call",
                 "params": {"name": "node_updates", "arguments": {}},
             }
@@ -337,6 +424,21 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         assert response is not None
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
+
+    async def test_cluster_updates_aggregates(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 25,
+                "method": "tools/call",
+                "params": {"name": "cluster_updates", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["total_count"], 2)
+        self.assertEqual(payload["updates"][0]["node"], "pve1")
 
 
 class McpProcessTests(unittest.TestCase):
@@ -492,6 +594,16 @@ class FakeVmStatus:
         return d
 
 
+class FakeVmConfig:
+    def __init__(self, name: str, cores: int, memory: int) -> None:
+        self.name = name
+        self.cores = cores
+        self.memory = memory
+
+    def model_dump(self, mode: str = "json") -> dict[str, object]:
+        return {"name": self.name, "cores": self.cores, "memory": self.memory}
+
+
 class FakeLxcResource:
     def __init__(
         self,
@@ -533,6 +645,16 @@ class FakeLxcStatus:
         return d
 
 
+class FakeLxcConfig:
+    def __init__(self, hostname: str, cores: int, memory: int) -> None:
+        self.hostname = hostname
+        self.cores = cores
+        self.memory = memory
+
+    def model_dump(self, mode: str = "json") -> dict[str, object]:
+        return {"hostname": self.hostname, "cores": self.cores, "memory": self.memory}
+
+
 class FakeStorageResource:
     def __init__(self, storage: str) -> None:
         self.storage = storage
@@ -549,6 +671,15 @@ class FakeStorageStatus:
         return {"total": self.total}
 
 
+class FakeStorageContentItem:
+    def __init__(self, volid: str, format: str) -> None:
+        self.volid = volid
+        self.format = format
+
+    def model_dump(self, mode: str = "json") -> dict[str, str]:
+        return {"volid": self.volid, "format": self.format}
+
+
 class FakeNetworkInterface:
     def __init__(self, iface: str) -> None:
         self.iface = iface
@@ -563,6 +694,15 @@ class FakeNodeUpdateEntry:
 
     def model_dump(self, mode: str = "json") -> dict[str, str]:
         return {"title": self.title}
+
+
+class FakeClusterUpdateEntry:
+    def __init__(self, node: str, title: str) -> None:
+        self.node = node
+        self.title = title
+
+    def model_dump(self, mode: str = "json") -> dict[str, str]:
+        return {"node": self.node, "title": self.title}
 
 
 class FakePveClient:
@@ -592,6 +732,9 @@ class FakePveClient:
     async def get_vm_status(self, node: str, vmid: int) -> FakeVmStatus:
         return FakeVmStatus(status="running", cpu=0.15, name="web")
 
+    async def get_vm_config(self, node: str, vmid: int) -> FakeVmConfig:
+        return FakeVmConfig(name="web", cores=4, memory=8192)
+
     async def get_containers(self) -> list[FakeLxcResource]:
         return [
             FakeLxcResource(
@@ -605,17 +748,29 @@ class FakePveClient:
     async def get_container_status(self, node: str, vmid: int) -> FakeLxcStatus:
         return FakeLxcStatus(status="running", cpu=0.05, name="ubuntu-ct")
 
+    async def get_container_config(self, node: str, vmid: int) -> FakeLxcConfig:
+        return FakeLxcConfig(hostname="ubuntu-ct", cores=2, memory=2048)
+
     async def get_storages(self) -> list[FakeStorageResource]:
         return [FakeStorageResource("local"), FakeStorageResource("nfs-backup")]
 
     async def get_storage_status(self, node: str, storage: str) -> FakeStorageStatus:
         return FakeStorageStatus(total=1000)
 
+    async def get_storage_content(self, node: str, storage: str) -> list[FakeStorageContentItem]:
+        return [FakeStorageContentItem("local:iso/test.iso", "iso")]
+
     async def get_network_interfaces(self, node: str) -> list[FakeNetworkInterface]:
         return [FakeNetworkInterface("vmbr0"), FakeNetworkInterface("enp1s0")]
 
     async def get_node_updates(self, node: str) -> list[FakeNodeUpdateEntry]:
         return [FakeNodeUpdateEntry("libc6"), FakeNodeUpdateEntry("openssl")]
+
+    async def get_cluster_updates(self) -> list[FakeClusterUpdateEntry]:
+        return [
+            FakeClusterUpdateEntry("pve1", "libc6"),
+            FakeClusterUpdateEntry("pve2", "openssl"),
+        ]
 
 
 def frame(message: dict[str, Any]) -> bytes:

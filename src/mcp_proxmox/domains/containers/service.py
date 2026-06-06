@@ -20,3 +20,10 @@ async def container_status(client: PveClient, node: str, vmid: int) -> dict[str,
 
     status = await client.get_container_status(node, vmid)
     return status.model_dump(mode="json")
+
+
+async def container_config(client: PveClient, node: str, vmid: int) -> dict[str, object]:
+    """Return full configuration for a specific container."""
+
+    config = await client.get_container_config(node, vmid)
+    return config.model_dump(mode="json")

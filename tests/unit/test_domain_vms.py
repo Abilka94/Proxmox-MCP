@@ -3,14 +3,15 @@ from __future__ import annotations
 import unittest
 from unittest.mock import AsyncMock
 
-from mcp_proxmox.domains.vms import vm_list, vm_status
-from mcp_proxmox.pve.models.responses import VmResource, VmStatus
+from mcp_proxmox.domains.vms import vm_config, vm_list, vm_status
+from mcp_proxmox.pve.models.responses import VmConfig, VmResource, VmStatus
 
 
 class MockPveClient:
     def __init__(self) -> None:
         self.get_vms = AsyncMock()
         self.get_vm_status = AsyncMock()
+        self.get_vm_config = AsyncMock()
 
 
 class VmDomainTests(unittest.IsolatedAsyncioTestCase):
@@ -65,6 +66,40 @@ class VmDomainTests(unittest.IsolatedAsyncioTestCase):
         await vm_status(client, "pve2", 200)
 
         client.get_vm_status.assert_awaited_once_with("pve2", 200)
+
+    async def test_vm_config_returns_full_config(self) -> None:
+        client = MockPveClient()
+        client.get_vm_config.return_value = VmConfig(
+            name="web",
+            vmid=100,
+            cores=4,
+            memory=8192,
+            sockets=1,
+            ostype="l26",
+            agent=1,
+            boot="order=virtio0;ide2;net0",
+            bootdisk="virtio0",
+            scsihw="virtio-scsi-pci",
+            tags="production;web",
+            template=0,
+        )
+
+        result = await vm_config(client, "pve1", 100)
+
+        self.assertEqual(result["name"], "web")
+        self.assertEqual(result["cores"], 4)
+        self.assertEqual(result["memory"], 8192)
+        self.assertEqual(result["ostype"], "l26")
+        self.assertEqual(result["scsihw"], "virtio-scsi-pci")
+        self.assertEqual(result["tags"], "production;web")
+
+    async def test_vm_config_passes_params(self) -> None:
+        client = MockPveClient()
+        client.get_vm_config.return_value = VmConfig(vmid=200)
+
+        await vm_config(client, "pve2", 200)
+
+        client.get_vm_config.assert_awaited_once_with("pve2", 200)
 
 
 if __name__ == "__main__":

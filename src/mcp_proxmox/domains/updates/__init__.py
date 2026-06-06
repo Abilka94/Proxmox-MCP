@@ -1,5 +1,5 @@
 """Update domain service."""
 
-from mcp_proxmox.domains.updates.service import node_updates
+from mcp_proxmox.domains.updates.service import cluster_updates, node_updates
 
-__all__ = ["node_updates"]
+__all__ = ["cluster_updates", "node_updates"]

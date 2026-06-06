@@ -20,3 +20,13 @@ async def storage_status(client: PveClient, node: str, storage: str) -> dict[str
 
     status = await client.get_storage_status(node, storage)
     return status.model_dump(mode="json")
+
+
+async def storage_content(client: PveClient, node: str, storage: str) -> dict[str, object]:
+    """Return content list (ISOs, templates, backups) for a specific storage."""
+
+    items = await client.get_storage_content(node, storage)
+    return {
+        "count": len(items),
+        "items": [item.model_dump(mode="json") for item in items],
+    }

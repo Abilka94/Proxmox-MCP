@@ -245,6 +245,75 @@ class PveClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].package, "libc6")
 
+    async def test_get_vm_config_returns_config(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": {
+                        "name": "web",
+                        "vmid": 100,
+                        "cores": 4,
+                        "memory": 8192,
+                        "sockets": 1,
+                        "ostype": "l26",
+                        "tags": "production;web",
+                    }
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_vm_config("pve1", 100)
+
+        self.assertEqual(result.name, "web")
+        self.assertEqual(result.cores, 4)
+        self.assertEqual(result.memory, 8192)
+
+    async def test_get_container_config_returns_config(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": {
+                        "hostname": "ubuntu-ct",
+                        "vmid": 300,
+                        "cores": 2,
+                        "memory": 2048,
+                        "ostype": "ubuntu",
+                    }
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_container_config("pve1", 300)
+
+        self.assertEqual(result.hostname, "ubuntu-ct")
+        self.assertEqual(result.cores, 2)
+        self.assertEqual(result.memory, 2048)
+
+    async def test_get_storage_content_returns_items(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": [
+                        {
+                            "volid": "local:iso/ubuntu-24.04.iso",
+                            "format": "iso",
+                            "size": 4294967296,
+                            "content": "iso",
+                        },
+                    ]
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_storage_content("pve1", "local")
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].volid, "local:iso/ubuntu-24.04.iso")
+        self.assertEqual(result[0].format, "iso")
+
     async def test_http_error_raises_pve_api_error(self) -> None:
         transport = httpx.MockTransport(error_handler(500, '{"error":"boom"}'))
         async with httpx.AsyncClient(transport=transport) as client:

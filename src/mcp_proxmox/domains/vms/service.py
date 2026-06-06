@@ -20,3 +20,10 @@ async def vm_status(client: PveClient, node: str, vmid: int) -> dict[str, object
 
     status = await client.get_vm_status(node, vmid)
     return status.model_dump(mode="json")
+
+
+async def vm_config(client: PveClient, node: str, vmid: int) -> dict[str, object]:
+    """Return full configuration for a specific VM."""
+
+    config = await client.get_vm_config(node, vmid)
+    return config.model_dump(mode="json")

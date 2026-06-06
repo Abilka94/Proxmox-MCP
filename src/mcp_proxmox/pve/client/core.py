@@ -11,14 +11,18 @@ from mcp_proxmox.logging import get_logger
 from mcp_proxmox.pve.auth.config import PveAuthConfig
 from mcp_proxmox.pve.models.responses import (
     ClusterStatusEntry,
+    ClusterUpdateEntry,
+    LxcConfig,
     LxcResource,
     LxcStatus,
     NetworkInterface,
     NodeInfo,
     NodeStatus,
     NodeUpdateEntry,
+    StorageContentItem,
     StorageResource,
     StorageStatus,
+    VmConfig,
     VmResource,
     VmStatus,
 )
@@ -85,10 +89,11 @@ class PveClient:
         return VmStatus.model_validate(payload)
 
     async def get_containers(self) -> list[LxcResource]:
-        payload = await self._get_json("/cluster/resources?type=lxc")
+        payload = await self._get_json("/cluster/resources?type=vm")
         if not isinstance(payload, list):
             raise PveApiError("Expected list response for containers", "/cluster/resources")
-        return [LxcResource.model_validate(item) for item in payload]
+        lxc_items = [item for item in payload if item.get("type") == "lxc"]
+        return [LxcResource.model_validate(item) for item in lxc_items]
 
     async def get_container_status(self, node: str, vmid: int) -> LxcStatus:
         path = f"/nodes/{httpx.URL(node).path}/lxc/{vmid}/status/current"
@@ -116,6 +121,56 @@ class PveClient:
         if not isinstance(payload, list):
             raise PveApiError("Expected list response for network", path)
         return [NetworkInterface.model_validate(item) for item in payload]
+
+    async def get_vm_config(self, node: str, vmid: int) -> VmConfig:
+        path = f"/nodes/{httpx.URL(node).path}/qemu/{vmid}/config"
+        payload = await self._get_json(path)
+        if not isinstance(payload, dict):
+            raise PveApiError("Expected object response for VM config", path)
+        return VmConfig.model_validate(payload)
+
+    async def get_container_config(self, node: str, vmid: int) -> LxcConfig:
+        path = f"/nodes/{httpx.URL(node).path}/lxc/{vmid}/config"
+        payload = await self._get_json(path)
+        if not isinstance(payload, dict):
+            raise PveApiError("Expected object response for container config", path)
+        return LxcConfig.model_validate(payload)
+
+    async def get_storage_content(self, node: str, storage: str) -> list[StorageContentItem]:
+        path = f"/nodes/{httpx.URL(node).path}/storage/{httpx.URL(storage).path}/content"
+        payload = await self._get_json(path)
+        if not isinstance(payload, list):
+            raise PveApiError("Expected list response for storage content", path)
+        return [StorageContentItem.model_validate(item) for item in payload]
+
+    async def get_cluster_updates(self) -> list[ClusterUpdateEntry]:
+        nodes = await self.get_nodes()
+        results: list[ClusterUpdateEntry] = []
+        for node_info in nodes:
+            node_name = node_info.node
+            try:
+                updates = await self.get_node_updates(node_name)
+                for update in updates:
+                    results.append(
+                        ClusterUpdateEntry(
+                            node=node_name,
+                            title=update.title,
+                            package=update.package,
+                            version=update.version,
+                            old_version=update.old_version,
+                            arch=update.arch,
+                            description=update.description,
+                            priority=update.priority,
+                        )
+                    )
+            except PveApiError:
+                results.append(
+                    ClusterUpdateEntry(
+                        node=node_name,
+                        title="<failed to fetch updates>",
+                    )
+                )
+        return results
 
     async def get_node_updates(self, node: str) -> list[NodeUpdateEntry]:
         path = f"/nodes/{httpx.URL(node).path}/apt/update"

@@ -142,6 +142,18 @@ class StorageStatus(PveResponseModel):
     shared: int | None = None
 
 
+class StorageContentItem(PveResponseModel):
+    volid: str
+    format: str | None = None
+    size: int | None = None
+    content: str | None = None
+    ctime: int | None = None
+    used: int | None = None
+    description: str | None = None
+    notes: str | None = None
+    encrypted: int | None = None
+
+
 class NetworkInterface(PveResponseModel):
     iface: str
     method: str | None = None
@@ -155,10 +167,96 @@ class NetworkInterface(PveResponseModel):
     priority: int | None = None
     comments: str | None = None
     autostart: int | None = None
-    families: str | None = None
+    families: list[str] | None = None
+
+
+class VmConfig(PveResponseModel):
+    model_config = ConfigDict(extra="allow")
+
+    digest: str | None = None
+    name: str | None = None
+    vmid: int | None = None
+    cores: int | None = None
+    memory: int | None = None
+    sockets: int | None = None
+    ostype: str | None = None
+    agent: int | str | None = None
+    boot: str | None = None
+    bootdisk: str | None = None
+    scsihw: str | None = None
+    smbios1: str | None = None
+    description: str | None = None
+    tags: str | None = None
+    template: int | None = None
+    numa: int | None = None
+    hotplug: str | None = None
+    balloon: int | None = None
+    shares: int | None = None
+    startup: str | None = None
+    protection: int | None = None
+    keyboard: str | None = None
+    vga: str | None = None
+    spice: int | None = None
+    machine: str | None = None
+    args: str | None = None
+    hookscript: str | None = None
+    cpu: str | None = None
+    numa: int | None = None
+    kvm: int | None = None
+    tablet: int | None = None
+    acpi: int | None = None
+    freeze: int | None = None
+    lock: str | None = None
+    migrate_downtime: float | None = None
+    migrate_speed: int | None = None
+    watchdog: str | None = None
+    parent: str | None = None
+
+
+class LxcConfig(PveResponseModel):
+    model_config = ConfigDict(extra="allow")
+
+    digest: str | None = None
+    hostname: str | None = None
+    vmid: int | None = None
+    cores: int | None = None
+    memory: int | None = None
+    swap: int | None = None
+    ostype: str | None = None
+    rootfs: str | None = None
+    description: str | None = None
+    tags: str | None = None
+    template: int | None = None
+    protection: int | None = None
+    startup: str | None = None
+    console: int | None = None
+    tty: int | None = None
+    features: str | None = None
+    hookscript: str | None = None
+    ignore_unpack_errors: int | None = None
+    lock: str | None = None
+    onboot: int | None = None
+    parent: str | None = None
+    arch: str | None = None
+    cmode: str | None = None
+    cpulimit: int | None = None
+    cpuunits: int | None = None
+    searchdomain: str | None = None
+    nameserver: str | None = None
 
 
 class NodeUpdateEntry(PveResponseModel):
+    title: str
+    package: str | None = None
+    version: str | None = None
+    old_version: str | None = None
+    arch: str | None = None
+    description: str | None = None
+    priority: str | None = None
+
+
+class ClusterUpdateEntry(PveResponseModel):
+    node: str
     title: str
     package: str | None = None
     version: str | None = None
