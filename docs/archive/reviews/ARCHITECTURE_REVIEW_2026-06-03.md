@@ -1,4 +1,4 @@
-> **Archived.** Исторический документ. Superseded by [ARCHITECTURE.md](../../ARCHITECTURE.md) v0.2 и ADR 0005–0010.
+> **Archived.** Исторический документ. Superseded by [ARCHITECTURE.md](../../architecture/ARCHITECTURE.md) v0.2 и ADR 0005–0010.
 
 # Architecture Review Report: MCP-Proxmox / Infrastructure Operator
 

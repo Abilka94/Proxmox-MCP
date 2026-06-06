@@ -395,6 +395,132 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
 
+    # Task tools
+
+    async def test_task_list_returns_tasks(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 26,
+                "method": "tools/call",
+                "params": {"name": "task_list", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["count"], 2)
+        self.assertEqual(payload["tasks"][0]["upid"], "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:")
+
+    async def test_task_list_with_filters(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 27,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_list",
+                    "arguments": {
+                        "node": "pve1",
+                        "user": "root@pam",
+                        "vmid": 100,
+                        "type": "qemcreate",
+                        "status": "running",
+                        "limit": 10,
+                    },
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("tasks", payload)
+
+    async def test_task_status_returns_status(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 28,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_status",
+                    "arguments": {"upid": "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:"},
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["status"], "stopped")
+        self.assertEqual(payload["exitstatus"], "OK")
+
+    async def test_task_status_missing_upid(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 29,
+                "method": "tools/call",
+                "params": {"name": "task_status", "arguments": {}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
+    async def test_task_log_returns_lines(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 30,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_log",
+                    "arguments": {
+                        "upid": "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:",
+                        "node": "pve1",
+                    },
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(payload["total_lines"], 2)
+        self.assertEqual(payload["lines"][0]["text"], "starting backup")
+        self.assertEqual(payload["lines"][1]["text"], " [...] 100%")
+
+    async def test_task_log_missing_upid(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 31,
+                "method": "tools/call",
+                "params": {"name": "task_log", "arguments": {"node": "pve1"}},
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
+    async def test_task_log_missing_node(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 32,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_log",
+                    "arguments": {"upid": "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:"},
+                },
+            }
+        )
+
+        assert response is not None
+        payload = json.loads(response["result"]["content"][0]["text"])
+        self.assertIn("error", payload)
+
     # Update tools
 
     async def test_node_updates_returns_updates(self) -> None:
@@ -771,6 +897,102 @@ class FakePveClient:
             FakeClusterUpdateEntry("pve1", "libc6"),
             FakeClusterUpdateEntry("pve2", "openssl"),
         ]
+
+    async def get_tasks(self, **kwargs) -> list[FakeTaskListEntry]:
+        return [
+            FakeTaskListEntry(
+                upid="UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:",
+                node="pve1",
+                user="root@pam",
+                type="qemcreate",
+                status="stopped",
+                exitstatus="OK",
+            ),
+            FakeTaskListEntry(
+                upid="UPID:pve:00000002:00000002:00000002:vzdump:root@pam:",
+                node="pve1",
+                user="root@pam",
+                type="vzdump",
+                status="running",
+            ),
+        ]
+
+    async def get_task_status(self, upid: str, **kwargs) -> FakeTaskStatus:
+        return FakeTaskStatus(status="stopped", exitstatus="OK")
+
+    async def get_task_log(self, node: str, upid: str, **kwargs) -> list[FakeTaskLogEntry]:
+        return [
+            FakeTaskLogEntry(t="starting backup"),
+            FakeTaskLogEntry(t=" [...] 100%", n=42),
+        ]
+
+
+class FakeTaskListEntry:
+    def __init__(
+        self,
+        upid: str,
+        node: str | None = None,
+        user: str | None = None,
+        type: str | None = None,
+        status: str | None = None,
+        exitstatus: str | None = None,
+        starttime: int | None = None,
+        endtime: int | None = None,
+        id: str | None = None,
+    ) -> None:
+        self.upid = upid
+        self.node = node
+        self.user = user
+        self.type = type
+        self.status = status
+        self.exitstatus = exitstatus
+        self.starttime = starttime
+        self.endtime = endtime
+        self.id = id
+
+    def model_dump(self, mode: str = "json") -> dict[str, object]:
+        d: dict[str, object] = {"upid": self.upid}
+        if self.node is not None:
+            d["node"] = self.node
+        if self.user is not None:
+            d["user"] = self.user
+        if self.type is not None:
+            d["type"] = self.type
+        if self.status is not None:
+            d["status"] = self.status
+        if self.exitstatus is not None:
+            d["exitstatus"] = self.exitstatus
+        if self.starttime is not None:
+            d["starttime"] = self.starttime
+        if self.endtime is not None:
+            d["endtime"] = self.endtime
+        if self.id is not None:
+            d["id"] = self.id
+        return d
+
+
+class FakeTaskStatus:
+    def __init__(self, status: str, exitstatus: str | None = None) -> None:
+        self.status = status
+        self.exitstatus = exitstatus
+
+    def model_dump(self, mode: str = "json") -> dict[str, object]:
+        d: dict[str, object] = {"status": self.status}
+        if self.exitstatus is not None:
+            d["exitstatus"] = self.exitstatus
+        return d
+
+
+class FakeTaskLogEntry:
+    def __init__(self, t: str, n: int | None = None) -> None:
+        self.t = t
+        self.n = n
+
+    def model_dump(self, mode: str = "json") -> dict[str, object]:
+        d: dict[str, object] = {"t": self.t}
+        if self.n is not None:
+            d["n"] = self.n
+        return d
 
 
 def frame(message: dict[str, Any]) -> bytes:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import urllib.parse
 from dataclasses import dataclass
 from typing import Any
 
@@ -22,6 +23,9 @@ from mcp_proxmox.pve.models.responses import (
     StorageContentItem,
     StorageResource,
     StorageStatus,
+    TaskListEntry,
+    TaskLogEntry,
+    TaskStatus,
     VmConfig,
     VmResource,
     VmStatus,
@@ -179,7 +183,76 @@ class PveClient:
             raise PveApiError("Expected list response for updates", path)
         return [NodeUpdateEntry.model_validate(item) for item in payload]
 
-    async def _get_json(self, path: str) -> Any:
+    async def get_tasks(
+        self,
+        *,
+        node: str | None = None,
+        user: str | None = None,
+        vmid: int | None = None,
+        type_filter: str | None = None,
+        status: str | None = None,
+        limit: int = 50,
+    ) -> list[TaskListEntry]:
+        if node is not None:
+            path = f"/nodes/{httpx.URL(node).path}/tasks"
+            params: dict[str, Any] = {"limit": limit}
+        else:
+            path = "/cluster/tasks"
+            params = {}
+
+        payload = await self._get_json(path, params=params)
+        if not isinstance(payload, list):
+            raise PveApiError("Expected list response for tasks", path)
+        entries = [TaskListEntry.model_validate(item) for item in payload]
+
+        filtered = entries
+        if user is not None:
+            filtered = [e for e in filtered if e.user == user]
+        if vmid is not None:
+            filtered = [e for e in filtered if e.vmid == vmid]
+        if type_filter is not None:
+            filtered = [e for e in filtered if e.type == type_filter]
+        if status is not None:
+            filtered = [e for e in filtered if e.status == status]
+
+        return filtered[:limit]
+
+    async def get_task_status(self, upid: str, *, node: str | None = None) -> TaskStatus:
+        try:
+            return await self._get_task_status_cluster(upid)
+        except PveApiError as exc:
+            if exc.status_code in (400, 501) and node:
+                return await self._get_task_status_node(node, upid)
+            raise
+
+    async def _get_task_status_cluster(self, upid: str) -> TaskStatus:
+        path = f"/cluster/tasks/{urllib.parse.quote(upid, safe='')}/status"
+        payload = await self._get_json(path)
+        if not isinstance(payload, dict):
+            raise PveApiError("Expected object response for task status", path)
+        return TaskStatus.model_validate(payload)
+
+    async def _get_task_status_node(self, node: str, upid: str) -> TaskStatus:
+        path = f"/nodes/{httpx.URL(node).path}/tasks/{urllib.parse.quote(upid, safe='')}/status"
+        payload = await self._get_json(path)
+        if not isinstance(payload, dict):
+            raise PveApiError("Expected object response for task status", path)
+        return TaskStatus.model_validate(payload)
+
+    async def get_task_log(
+        self, node: str, upid: str, *, start: int | None = None
+    ) -> list[TaskLogEntry]:
+        path = f"/nodes/{httpx.URL(node).path}/tasks/{urllib.parse.quote(upid, safe='')}/log"
+        params: dict[str, Any] = {}
+        if start is not None:
+            params["start"] = start
+
+        payload = await self._get_json(path, params=params)
+        if not isinstance(payload, list):
+            raise PveApiError("Expected list response for task log", path)
+        return [TaskLogEntry.model_validate(item) for item in payload]
+
+    async def _get_json(self, path: str, params: dict[str, Any] | None = None) -> Any:
         url = f"{self._auth.base_url}/api2/json{path}"
 
         try:
@@ -190,6 +263,7 @@ class PveClient:
                     "Accept": "application/json",
                     "Authorization": self._auth.authorization_header,
                 },
+                params=params,
             )
             response.raise_for_status()
             body = response.json()

@@ -8,9 +8,9 @@
 
 | Документ | Роль |
 |----------|------|
-| [ARCHITECTURE.md](ARCHITECTURE.md) v0.2 | Runtime, MCP, Policy, Domain Services, tiers |
-| [MEMORY_KNOWLEDGE_MODEL.md](MEMORY_KNOWLEDGE_MODEL.md) | Memory, Knowledge, Service, EntityRef, traverse |
-| [ADR-0005…0010](adr/ADR_INDEX.md) | Позиционирование, масштаб, совместимость |
+| [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) v0.2 | Runtime, MCP, Policy, Domain Services, tiers |
+| [MEMORY_KNOWLEDGE_MODEL.md](../architecture/MEMORY_KNOWLEDGE_MODEL.md) | Memory, Knowledge, Service, EntityRef, traverse |
+| [ADR-0005…0010](../adr/ADR_INDEX.md) | Позиционирование, масштаб, совместимость |
 
 **Принцип реализации:** как можно раньше получить **полезного READ ONLY оператора**; write-возможности — позже, через Policy Engine и tiers OPERATOR/ADMIN.
 
@@ -244,7 +244,7 @@ flowchart LR
 ### 4.3 Зависимости
 
 - Phase 1A (нужен `cluster_id`, live probe для lazy reconcile).  
-- [MEMORY_KNOWLEDGE_MODEL.md](MEMORY_KNOWLEDGE_MODEL.md) §4, §6, §10.
+- [MEMORY_KNOWLEDGE_MODEL.md](../architecture/MEMORY_KNOWLEDGE_MODEL.md) §4, §6, §10.
 
 ### 4.4 Definition of Done
 

@@ -12,6 +12,7 @@ from mcp_proxmox.domains.containers import container_config, container_list, con
 from mcp_proxmox.domains.network import network_list
 from mcp_proxmox.domains.nodes import list_nodes, node_status
 from mcp_proxmox.domains.storage import storage_content, storage_list, storage_status
+from mcp_proxmox.domains.tasks import task_list, task_log, task_status
 from mcp_proxmox.domains.updates import cluster_updates, node_updates
 from mcp_proxmox.domains.vms import vm_config, vm_list, vm_status
 from mcp_proxmox.policy import ToolPolicy, ToolTier
@@ -36,6 +37,9 @@ ALL_TOOLS = [
     "network_list",
     "node_updates",
     "cluster_updates",
+    "task_list",
+    "task_status",
+    "task_log",
 ]
 
 
@@ -175,6 +179,41 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
 
     async def cluster_updates_tool(_: dict[str, Any]) -> dict[str, Any]:
         return await cluster_updates(pve_client)
+
+    async def task_list_tool(params: dict[str, Any]) -> dict[str, Any]:
+        return await task_list(
+            pve_client,
+            node=params.get("node"),
+            user=params.get("user"),
+            vmid=params.get("vmid"),
+            type_filter=params.get("type"),
+            status=params.get("status"),
+            limit=params.get("limit", 50),
+        )
+
+    async def task_status_tool(params: dict[str, Any]) -> dict[str, Any]:
+        upid = params.get("upid")
+        if not isinstance(upid, str) or not upid:
+            return {"error": "upid is required"}
+        return await task_status(
+            pve_client,
+            upid,
+            node=params.get("node"),
+        )
+
+    async def task_log_tool(params: dict[str, Any]) -> dict[str, Any]:
+        upid = params.get("upid")
+        node = params.get("node")
+        if not isinstance(upid, str) or not upid:
+            return {"error": "upid is required"}
+        if not isinstance(node, str) or not node:
+            return {"error": "node is required"}
+        return await task_log(
+            pve_client,
+            upid,
+            node,
+            start=params.get("start"),
+        )
 
     return ToolRegistry(
         [
@@ -389,6 +428,88 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
                 },
                 policy=ToolPolicy(name="cluster_updates", tier=ToolTier.READ),
                 handler=cluster_updates_tool,
+            ),
+            ToolDefinition(
+                name="task_list",
+                description="List recent tasks across the cluster with optional filters.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "node": {
+                            "type": "string",
+                            "description": "Filter by node name",
+                        },
+                        "user": {
+                            "type": "string",
+                            "description": "Filter by user who initiated the task",
+                        },
+                        "vmid": {
+                            "type": "integer",
+                            "description": "Filter by VM/container ID",
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "Filter by task type (e.g. qemcreate, vzdump)",
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "Filter by status (running, stopped)",
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Maximum number of tasks to return (default 50, max 500)",
+                        },
+                    },
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_list", tier=ToolTier.READ),
+                handler=task_list_tool,
+            ),
+            ToolDefinition(
+                name="task_status",
+                description="Return status for a specific task by UPID.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "upid": {
+                            "type": "string",
+                            "description": "UPID of the task",
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node name (fallback for cross-node UPID)",
+                        },
+                    },
+                    "required": ["upid"],
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_status", tier=ToolTier.READ),
+                handler=task_status_tool,
+            ),
+            ToolDefinition(
+                name="task_log",
+                description="Return log lines for a specific task.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "upid": {
+                            "type": "string",
+                            "description": "UPID of the task",
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Node name where the task runs",
+                        },
+                        "start": {
+                            "type": "integer",
+                            "description": "Starting line number (0-indexed)",
+                        },
+                    },
+                    "required": ["upid", "node"],
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_log", tier=ToolTier.READ),
+                handler=task_log_tool,
             ),
         ]
     )

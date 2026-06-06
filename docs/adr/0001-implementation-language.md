@@ -67,8 +67,8 @@
 
 ## Связанные документы
 
-- [IMPLEMENTATION_PACKAGE.md](../implementation/IMPLEMENTATION_PACKAGE.md)  
-- [IMPLEMENTATION_ROADMAP.md](../IMPLEMENTATION_ROADMAP.md) — T-000, T-004
+- [IMPLEMENTATION_PACKAGE.md](../phase-1a/reports/IMPLEMENTATION_PACKAGE.md)  
+- [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md) — T-000, T-004
 
 ## Статус принятия
 

@@ -81,9 +81,9 @@ mcp:
 
 ## Связанные документы
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) §3.2, §3.5  
-- [IMPLEMENTATION_PACKAGE.md](../implementation/IMPLEMENTATION_PACKAGE.md)  
-- [IMPLEMENTATION_ROADMAP.md](../IMPLEMENTATION_ROADMAP.md) — T-001, T-600
+- [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) §3.2, §3.5  
+- [IMPLEMENTATION_PACKAGE.md](../phase-1a/reports/IMPLEMENTATION_PACKAGE.md)  
+- [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md) — T-001, T-600
 
 ## Статус принятия
 

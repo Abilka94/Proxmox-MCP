@@ -10,8 +10,8 @@
 | Документ | Назначение |
 |----------|------------|
 | [MEMORY_KNOWLEDGE_MODEL.md](MEMORY_KNOWLEDGE_MODEL.md) v1.0 | Память, Knowledge, Service, EntityRef, traverse, reconcile |
-| [adr/ADR_INDEX.md](adr/ADR_INDEX.md) | Индекс архитектурных решений (ADR) |
-| [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md) v1.0 | Фазы реализации, MVP, порядок сборки |
+| [adr/ADR_INDEX.md](../adr/ADR_INDEX.md) | Индекс архитектурных решений (ADR) |
+| [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md) v1.0 | Фазы реализации, MVP, порядок сборки |
 
 > Этот документ — **единственный** актуальный архитектурный документ верхнего уровня по runtime и MCP. Детали Memory/Knowledge **не дублируются** здесь — см. MEMORY_KNOWLEDGE_MODEL.md.
 
@@ -40,7 +40,7 @@
 
 | Параметр | Значение |
 |----------|----------|
-| Режим PVE API | **Только чтение** (tier READ); мутации PVE — Phase 5+ ([ROADMAP](IMPLEMENTATION_ROADMAP.md)) |
+| Режим PVE API | **Только чтение** (tier READ); мутации PVE — Phase 5+ ([ROADMAP](../releases/IMPLEMENTATION_ROADMAP.md)) |
 | Подключение | Один logical endpoint PVE (`https://host:8006`); топология **N ≥ 1** нод (standalone или cluster) |
 | Аутентификация | API Token (`PVEAPIToken`) |
 | Policy по умолчанию | `READ_ONLY` |
@@ -189,7 +189,7 @@ flowchart TB
 
 Именование: `pve_<subsystem>_<action>`. Группировка по **tier** (§6) и подсистеме.
 
-Полный перечень по фазам: [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md); снимок контракта: `TOOL_CATALOG.md` (генерируется при сборке).
+Полный перечень по фазам: [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md); снимок контракта: `TOOL_CATALOG.md` (генерируется при сборке).
 
 #### Resources (URI)
 
@@ -274,7 +274,7 @@ MCP-Proxmox/
 └── tests/{unit,contract,integration}/
 ```
 
-Реализация по фазам: [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md) (старт — **Phase 1A**).
+Реализация по фазам: [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md) (старт — **Phase 1A**).
 
 ---
 
@@ -291,7 +291,7 @@ MCP-Proxmox/
 
 Если capability недоступна: tool возвращает **`CapabilityUnavailable`**, не fatal для сервера. Memory reconcile пропускает соответствующие refs (MEMORY §7.5).
 
-**Поддержка PVE:** Tier 1 — 9.x; Tier 2 (best effort) — 8.x; 7.x — вне scope. Детали: [ADR-0008](adr/0008-pve-compatibility-matrix.md).
+**Поддержка PVE:** Tier 1 — 9.x; Tier 2 (best effort) — 8.x; 7.x — вне scope. Детали: [ADR-0008](../adr/0008-pve-compatibility-matrix.md).
 
 ---
 
@@ -422,7 +422,7 @@ flowchart TD
 | **Memory search** | default limit 20, max 100 |
 | **Logs** | `max_lines` default 500, max 5000 |
 
-Детали и обоснование: [ADR-0009](adr/0009-scalability-limits.md).
+Детали и обоснование: [ADR-0009](../adr/0009-scalability-limits.md).
 
 ---
 
@@ -448,7 +448,7 @@ Breaking changes — CHANGELOG + метки issue `pve-8` / `pve-9`.
 
 ### 11.1 ADR
 
-Каталог `docs/adr/`; индекс: [ADR_INDEX.md](adr/ADR_INDEX.md). Принятые: **0005–0010** (позиционирование, knowledge, EntityRef, compatibility, scalability, Service types).
+Каталог `docs/adr/`; индекс: [ADR_INDEX.md](../adr/ADR_INDEX.md). Принятые: **0005–0010** (позиционирование, knowledge, EntityRef, compatibility, scalability, Service types).
 
 Доступ из MCP: `pve_adr_list`, `pve_adr_get`, resource `pve://adr/{id}`.
 
@@ -515,7 +515,7 @@ subsystems:
 
 ## 13. Реализация и релизы
 
-План разработки, MVP, Phase 1A–6, task list: **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)**.
+План разработки, MVP, Phase 1A–6, task list: **[IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md)**.
 
 | Веха | Ориентир | Содержание |
 |------|----------|------------|
@@ -533,12 +533,12 @@ subsystems:
 
 | ADR | Тема |
 |-----|------|
-| [0001](adr/0001-implementation-language.md) | Язык реализации |
-| [0002](adr/0002-mcp-transport.md) | stdio vs SSE |
-| [0003](adr/0003-memory-write-in-read-only.md) | Memory write в READ_ONLY |
-| [0004](adr/0004-network-scope.md) | Network / SDN scope |
-| [0011](adr/ADR_INDEX.md) | Backup subsystem scope |
-| [0012](adr/ADR_INDEX.md) | Traversal API (детализация) |
+| [0001](../adr/0001-implementation-language.md) | Язык реализации |
+| [0002](../adr/0002-mcp-transport.md) | stdio vs SSE |
+| [0003](../adr/0003-memory-write-in-read-only.md) | Memory write в READ_ONLY |
+| [0004](../adr/0004-network-scope.md) | Network / SDN scope |
+| [0011](../adr/ADR_INDEX.md) | Backup subsystem scope |
+| [0012](../adr/ADR_INDEX.md) | Traversal API (детализация) |
 
 Не блокируют старт Phase 1A при разумных defaults (stdio, allow_write=true).
 
@@ -546,7 +546,7 @@ subsystems:
 
 ## 15. Резюме
 
-MCP-Proxmox — **слоистый MCP-сервер** для **Proxmox VE** с **Policy Engine**, **Orchestrator** (N нод без зашитого размера), **Capability Discovery**, **Domain Services** по Infrastructure Layer и **Knowledge Service** по Service Layer. Релиз v1 — **READ_ONLY** к PVE; Memory и диагностика `Service → Cluster` — по [MEMORY_KNOWLEDGE_MODEL.md](MEMORY_KNOWLEDGE_MODEL.md). Реализация — по [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md).
+MCP-Proxmox — **слоистый MCP-сервер** для **Proxmox VE** с **Policy Engine**, **Orchestrator** (N нод без зашитого размера), **Capability Discovery**, **Domain Services** по Infrastructure Layer и **Knowledge Service** по Service Layer. Релиз v1 — **READ_ONLY** к PVE; Memory и диагностика `Service → Cluster` — по [MEMORY_KNOWLEDGE_MODEL.md](MEMORY_KNOWLEDGE_MODEL.md). Реализация — по [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md).
 
 **Архитектурная фаза документации:** завершена с v0.2.
 
@@ -632,7 +632,7 @@ MCP-Proxmox — **слоистый MCP-сервер** для **Proxmox VE** с *
 
 ### 16.6 Завершение архитектурной фазы
 
-Документация согласована. **Разрешён переход к реализации Phase 1A** согласно [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md) (tasks T-000…T-117).
+Документация согласована. **Разрешён переход к реализации Phase 1A** согласно [IMPLEMENTATION_ROADMAP.md](../releases/IMPLEMENTATION_ROADMAP.md) (tasks T-000…T-117).
 
 ---
 

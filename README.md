@@ -9,9 +9,8 @@ MCP tools are implemented in later Phase 1A tasks.
 ## Documentation
 
 - [Documentation index](docs/README.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Implementation package](docs/implementation/IMPLEMENTATION_PACKAGE.md)
-- [Phase 1A task plan](docs/implementation/PHASE_1A_TASK_PLAN.md)
+- [Architecture](docs/architecture/ARCHITECTURE.md)
+- [Phase 1A reports](docs/phase-1a/reports/)
 
 ## Development
 

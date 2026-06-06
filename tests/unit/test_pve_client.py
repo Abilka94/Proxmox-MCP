@@ -314,6 +314,173 @@ class PveClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result[0].volid, "local:iso/ubuntu-24.04.iso")
         self.assertEqual(result[0].format, "iso")
 
+    async def test_get_tasks_returns_typed_entries(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": [
+                        {
+                            "upid": "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:",
+                            "node": "pve1",
+                            "user": "root@pam",
+                            "type": "qemcreate",
+                            "status": "stopped",
+                            "exitstatus": "OK",
+                            "starttime": 1717000000,
+                            "endtime": 1717000010,
+                        },
+                    ]
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_tasks()
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].upid, "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:")
+        self.assertEqual(result[0].node, "pve1")
+
+    async def test_get_tasks_with_node_uses_node_endpoint_and_limit(self) -> None:
+        recorded: list[httpx.Request] = []
+
+        def record(request: httpx.Request) -> httpx.Response:
+            recorded.append(request)
+            return httpx.Response(200, json={"data": []})
+
+        transport = httpx.MockTransport(record)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            await pve_client.get_tasks(node="pve1", limit=10)
+
+        self.assertEqual(len(recorded), 1)
+        self.assertIn("/nodes/pve1/tasks", str(recorded[0].url))
+        params = dict(recorded[0].url.params)
+        self.assertEqual(params.get("limit"), "10")
+
+    async def test_get_tasks_filters_client_side(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": [
+                        {"upid": "UPID:1", "node": "pve1", "status": "running", "type": "qemu"},
+                        {"upid": "UPID:2", "node": "pve1", "status": "stopped", "type": "qemu"},
+                        {"upid": "UPID:3", "node": "pve2", "status": "running", "type": "vzdump"},
+                    ]
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_tasks(status="running")
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].upid, "UPID:1")
+        self.assertEqual(result[1].upid, "UPID:3")
+
+    async def test_get_tasks_client_side_limit(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": [
+                        {"upid": f"UPID:{i}", "node": "pve1", "status": "stopped"}
+                        for i in range(20)
+                    ]
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client.get_tasks(limit=5)
+
+        self.assertEqual(len(result), 5)
+
+    async def test_get_task_status_returns_typed_status(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler({"data": {"status": "stopped", "exitstatus": "OK"}})
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            upid = "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:"
+            result = await pve_client.get_task_status(upid)
+
+        self.assertEqual(result.status, "stopped")
+        self.assertEqual(result.exitstatus, "OK")
+
+    async def test_get_task_status_fallback_on_400(self) -> None:
+        call_count = 0
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                return httpx.Response(400, text='{"errors":{"upid":"wrong node"}}')
+            return httpx.Response(200, json={"data": {"status": "stopped", "exitstatus": "OK"}})
+
+        transport = httpx.MockTransport(handler)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            upid = "UPID:pve1:00000001:00000001:00000001:qemcreate:root@pam:"
+            result = await pve_client.get_task_status(upid, node="pve1")
+
+        self.assertEqual(call_count, 2)
+        self.assertEqual(result.status, "stopped")
+
+    async def test_get_task_status_fallback_only_with_node(self) -> None:
+        call_count = 0
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal call_count
+            call_count += 1
+            return httpx.Response(400, text='{"errors":{"upid":"wrong node"}}')
+
+        transport = httpx.MockTransport(handler)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            upid = "UPID:pve1:00000001:00000001:00000001:qemcreate:root@pam:"
+
+            with self.assertRaises(PveApiError):
+                await pve_client.get_task_status(upid)
+
+        self.assertEqual(call_count, 1)
+
+    async def test_get_task_log_returns_entries(self) -> None:
+        transport = httpx.MockTransport(
+            mock_handler(
+                {
+                    "data": [
+                        {"t": "TASK ERROR: something failed"},
+                        {"n": 1, "t": " [...] 100%"},
+                    ]
+                }
+            )
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            upid = "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:"
+            result = await pve_client.get_task_log("pve1", upid)
+
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].t, "TASK ERROR: something failed")
+        self.assertEqual(result[1].n, 1)
+
+    async def test_get_task_log_passes_start_param(self) -> None:
+        recorded: list[httpx.Request] = []
+
+        def record(request: httpx.Request) -> httpx.Response:
+            recorded.append(request)
+            return httpx.Response(200, json={"data": []})
+
+        transport = httpx.MockTransport(record)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            upid = "UPID:pve:00000001:00000001:00000001:vzdump:root@pam:"
+            await pve_client.get_task_log("pve1", upid, start=5)
+
+        self.assertEqual(len(recorded), 1)
+        params = dict(recorded[0].url.params)
+        self.assertEqual(params.get("start"), "5")
+
     async def test_http_error_raises_pve_api_error(self) -> None:
         transport = httpx.MockTransport(error_handler(500, '{"error":"boom"}'))
         async with httpx.AsyncClient(transport=transport) as client:

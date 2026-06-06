@@ -245,6 +245,28 @@ class LxcConfig(PveResponseModel):
     nameserver: str | None = None
 
 
+class TaskListEntry(PveResponseModel):
+    upid: str
+    node: str | None = None
+    user: str | None = None
+    type: str | None = None
+    status: str | None = None
+    exitstatus: str | None = None
+    starttime: int | None = None
+    endtime: int | None = None
+    id: str | None = None
+
+
+class TaskStatus(PveResponseModel):
+    status: str
+    exitstatus: str | None = None
+
+
+class TaskLogEntry(PveResponseModel):
+    t: str
+    n: int | None = None
+
+
 class NodeUpdateEntry(PveResponseModel):
     title: str
     package: str | None = None

@@ -20,7 +20,7 @@
 
 | ID | Название | Статус | Зависимости | Связь с ARCHITECTURE |
 |----|----------|--------|-------------|----------------------|
-| [0001](0001-implementation-language.md) | Язык реализации (Python 3.12+) | **accepted** | — | [IMPLEMENTATION_PACKAGE](../implementation/IMPLEMENTATION_PACKAGE.md) |
+| [0001](0001-implementation-language.md) | Язык реализации (Python 3.12+) | **accepted** | — | [IMPLEMENTATION_PACKAGE](../phase-1a/reports/IMPLEMENTATION_PACKAGE.md) |
 | [0002](0002-mcp-transport.md) | Primary MCP transport (stdio Phase 1A) | **accepted** | 0001 | §3.2 ARCHITECTURE |
 | [0003](0003-memory-write-in-read-only.md) | Запись Knowledge в режиме READ_ONLY | proposed | 0006, 0007 | §5.1, Memory |
 | [0004](0004-network-scope.md) | Объём Network subsystem (SDN vs classic) | proposed | 0008 | §1.3, §8 |
@@ -81,6 +81,6 @@ flowchart LR
 
 ## Phase 1A
 
-- [IMPLEMENTATION_PACKAGE.md](../implementation/IMPLEMENTATION_PACKAGE.md)  
-- [PHASE_1A_TASK_PLAN.md](../implementation/PHASE_1A_TASK_PLAN.md)  
+- [IMPLEMENTATION_PACKAGE.md](../phase-1a/reports/IMPLEMENTATION_PACKAGE.md)  
+- [PHASE_1A_TASK_PLAN.md](../phase-1a/reports/PHASE_1A_TASK_PLAN.md)  
 - Следующая задача: **T-004** (скелет репозитория)
