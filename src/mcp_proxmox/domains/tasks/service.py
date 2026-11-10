@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import time
+from typing import Any
 
+from mcp_proxmox.logging import get_logger
 from mcp_proxmox.pve.client import PveClient
 from mcp_proxmox.pve.client.core import PveApiError
+from mcp_proxmox.pve.client.task_validation import TaskCancelInputError, validate_task_identity
 
 _MAX_LOG_LINES = 5000
 _MAX_BACKOFF = 30.0
@@ -247,3 +251,140 @@ async def task_follow(
             return response
 
         await asyncio.sleep(poll_interval)
+
+
+def validate_cancel_arguments(
+    upid: str,
+    node: str,
+    wait: bool,
+    timeout: int,
+    poll_interval: float,
+) -> None:
+    validate_task_identity(node, upid)
+    if type(wait) is not bool:
+        raise TaskCancelInputError("wait должен быть boolean")
+    if type(timeout) is not int or not 1 <= timeout <= 3600:
+        raise TaskCancelInputError("timeout должен быть целым числом от 1 до 3600")
+    if (
+        type(poll_interval) not in (int, float)
+        or not 0.1 <= poll_interval <= 30
+        or not math.isfinite(poll_interval)
+    ):
+        raise TaskCancelInputError("poll_interval должен быть конечным числом от 0.1 до 30")
+
+
+async def task_cancel(
+    client: PveClient,
+    upid: str,
+    *,
+    node: str,
+    wait: bool = False,
+    timeout: int = 120,
+    poll_interval: float = 1.0,
+) -> dict[str, Any]:
+    validate_cancel_arguments(upid, node, wait, timeout, poll_interval)
+    logger = get_logger("mcp_proxmox.task_cancel")
+    result: dict[str, Any] = {
+        "upid": upid,
+        "node": node,
+        "cancel_requested": False,
+        "status": "unknown",
+        "stopped": None,
+        "exitstatus": None,
+        "timed_out": False,
+        "error": None,
+        "message": "",
+        "wait_seconds": 0.0,
+    }
+
+    def record(phase: str) -> dict[str, Any]:
+        logger.info(
+            "task_cancel",
+            extra={
+                "tool": "task_cancel",
+                "upid": upid,
+                "node": node,
+                "phase": phase,
+                "request_outcome": result["cancel_requested"],
+                "status": result["status"],
+                "timed_out": result["timed_out"],
+                "error": result["error"],
+            },
+        )
+        return result
+
+    def failure(exc: PveApiError, phase: str) -> dict[str, Any]:
+        code = exc.kind or {
+            400: "invalid_request",
+            401: "authentication_failed",
+            403: "permission_denied",
+            404: "resource_not_found",
+            501: "endpoint_unsupported",
+        }.get(exc.status_code or 0, "api_error")
+        if phase == "delete":
+            if exc.request_outcome not in ("not_sent", "rejected"):
+                result["cancel_requested"] = None
+                code = "request_outcome_unknown"
+        elif phase == "observe":
+            code = "observation_failed"
+        result.update(status="unknown", stopped=None, exitstatus=None)
+        result["error"] = {
+            "code": code,
+            "phase": phase,
+            "http_status": exc.status_code,
+            "detail": "Ошибка обращения к API Proxmox",
+        }
+        result["message"] = "Результат операции не подтверждён; смотрите error"
+        return record(phase)
+
+    def observe(status: Any) -> None:
+        if status.status not in ("running", "stopped"):
+            raise PveApiError("Некорректный статус", "/tasks/status", kind="invalid_response")
+        result.update(
+            status=status.status,
+            stopped=status.status == "stopped",
+            exitstatus=status.exitstatus if status.status == "stopped" else None,
+        )
+
+    try:
+        current = await client.get_task_status_on_node(node, upid)
+        observe(current)
+    except PveApiError as exc:
+        return failure(exc, "preflight")
+    if result["stopped"]:
+        result["message"] = "Задача уже завершена; DELETE не отправлен"
+        return record("preflight")
+    result.update(status="unknown", stopped=None)
+    try:
+        await client.stop_task(node, upid)
+    except PveApiError as exc:
+        return failure(exc, "delete")
+    result["cancel_requested"] = True
+    result["message"] = "API подтвердил запрос остановки; состояние после запроса не проверялось"
+    record("delete")
+    if not wait:
+        return result
+    start = time.monotonic()
+    deadline = start + timeout
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            result.update(timed_out=True, message="Исчерпан срок наблюдения за задачей")
+            result["wait_seconds"] = round(time.monotonic() - start, 3)
+            return record("observe")
+        try:
+            async with asyncio.timeout(remaining):
+                current = await client.get_task_status_on_node(node, upid)
+            if time.monotonic() >= deadline:
+                continue
+            observe(current)
+        except TimeoutError:
+            continue
+        except PveApiError as exc:
+            result["wait_seconds"] = round(time.monotonic() - start, 3)
+            return failure(exc, "observe")
+        if result["stopped"]:
+            result["wait_seconds"] = round(time.monotonic() - start, 3)
+            result["message"] = "Наблюдается завершение задачи; причина не установлена"
+            return record("observe")
+        await asyncio.sleep(max(0, min(poll_interval, deadline - time.monotonic())))

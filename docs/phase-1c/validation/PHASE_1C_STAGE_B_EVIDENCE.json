@@ -1,0 +1,371 @@
+{
+  "timestamp": "2026-11-09T22:47:59.506672+03:00",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/cluster/ha/resources",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks",
+      "http": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/shutdown",
+      "http": 200,
+      "response": {
+        "data": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "http": 200
+    },
+    {
+      "method": "DELETE",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+      "http": 200,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/log",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "http": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "http": 200
+    }
+  ],
+  "mutate_sent": {
+    "POST": 1,
+    "DELETE": 1
+  },
+  "verdict": "PASS",
+  "before": {
+    "vmid": 301,
+    "name": "phase1c-cancel-test",
+    "status": "running",
+    "qmpstatus": "running",
+    "uptime": 219,
+    "ha": {
+      "managed": 0
+    }
+  },
+  "preflight_repeat": "PASS",
+  "executing_mcp_policy": "OPERATOR",
+  "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+  "task_before_cancel": {
+    "pstart": 28285461,
+    "pid": 802098,
+    "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+    "tokenid": "openwebui",
+    "id": "301",
+    "starttime": 1794253680,
+    "type": "qmshutdown",
+    "status": "running",
+    "user": "ai-agent@pve",
+    "node": "7500T"
+  },
+  "upid_verified": true,
+  "mcp_response": {
+    "jsonrpc": "2.0",
+    "id": "phase1c-stage-b-301",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"cancel_requested\": true, \"error\": null, \"exitstatus\": \"received interrupt\", \"message\": \"Наблюдается завершение задачи; причина не установлена\", \"node\": \"7500T\", \"status\": \"stopped\", \"stopped\": true, \"timed_out\": false, \"upid\": \"UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:\", \"wait_seconds\": 0.019}"
+        }
+      ]
+    }
+  },
+  "task_after": {
+    "user": "ai-agent@pve",
+    "starttime": 1794253680,
+    "node": "7500T",
+    "pid": 802098,
+    "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+    "pstart": 28285461,
+    "exitstatus": "received interrupt",
+    "status": "stopped",
+    "type": "qmshutdown",
+    "tokenid": "openwebui",
+    "id": "301"
+  },
+  "task_log": [
+    {
+      "n": 1,
+      "t": "TASK ERROR: received interrupt"
+    }
+  ],
+  "domain_result": {
+    "cancel_requested": true,
+    "error": null,
+    "exitstatus": "received interrupt",
+    "message": "Наблюдается завершение задачи; причина не установлена",
+    "node": "7500T",
+    "status": "stopped",
+    "stopped": true,
+    "timed_out": false,
+    "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+    "wait_seconds": 0.019
+  },
+  "vm_after": {
+    "vmid": 301,
+    "name": "phase1c-cancel-test",
+    "status": "running",
+    "qmpstatus": "running",
+    "uptime": 220,
+    "ha": {
+      "managed": 0
+    }
+  },
+  "vm_config_unchanged": true,
+  "config_bytes_restored": true,
+  "restored_policy": "READ_ONLY",
+  "restored_operator_denied": true,
+  "logs": [
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/ha/resources \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/ha/resources"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks?source=active&limit=500 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: POST https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/shutdown \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_post",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/shutdown"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "event": "HTTP Request: DELETE https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "event": "pve_delete",
+      "http_status": 200,
+      "kind": null,
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "phase": "delete",
+      "request_outcome": "accepted"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "delete",
+      "request_outcome": true,
+      "status": "unknown",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "observe",
+      "request_outcome": true,
+      "status": "stopped",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-stage-b-301",
+      "event": "tool_call",
+      "level": "INFO",
+      "logger": "mcp_proxmox.mcp.server",
+      "outcome": "ok",
+      "tool": "task_cancel"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log?limit=5000 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    }
+  ],
+  "config_current_readonly": true
+}

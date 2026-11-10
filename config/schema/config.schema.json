@@ -21,7 +21,7 @@
       "type": "object",
       "required": ["mode", "memory"],
       "properties": {
-        "mode": { "const": "READ_ONLY" },
+        "mode": { "enum": ["READ_ONLY", "OPERATOR"], "default": "READ_ONLY" },
         "memory": {
           "type": "object",
           "required": ["allow_write"],

@@ -30,7 +30,7 @@ connection:
   verify_ssl: <true|false>
 
 policy:
-  mode: READ_ONLY          # only valid value
+  mode: READ_ONLY          # default; OPERATOR enables task_cancel
   memory:
     allow_write: <true|false>
 
@@ -71,7 +71,7 @@ subsystems:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `policy.mode` | enum: `READ_ONLY` | Only valid value in current implementation |
+| `policy.mode` | enum: `READ_ONLY`, `OPERATOR` | READ_ONLY — по умолчанию; OPERATOR разрешает task_cancel после проверки ACL |
 | `policy.memory.allow_write` | bool | Allow the memory system to persist learned data |
 
 ### Optional Parameters (all have defaults)
@@ -104,7 +104,7 @@ connection:
   id: "validation"
   host: "https://192.168.1.100:8006"
   token_id: "root@pam!mcp-validator"
-  token_secret: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  token_secret: "REPLACE_WITH_YOUR_PVE_TOKEN_SECRET"
   verify_ssl: false
 ```
 
@@ -120,10 +120,12 @@ connection:
 ```
 
 With `.env`:
+
+Файл `.env` автоматически не загружается сервером. Экспортируйте значения в окружение MCP-процесса или задайте их средствами MCP-клиента.
 ```
 PVE_HOST=https://pve.production.example:8006
 PVE_TOKEN_ID=root@pam!prod-token
-PVE_TOKEN_SECRET=prod-secret-value
+PVE_TOKEN_SECRET=YOUR_PVE_TOKEN_SECRET_HERE
 ```
 
 ---

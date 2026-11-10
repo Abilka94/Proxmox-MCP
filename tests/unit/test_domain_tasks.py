@@ -13,6 +13,7 @@ class MockPveClient:
         self.get_tasks = AsyncMock()
         self.get_task_status = AsyncMock()
         self.get_task_log = AsyncMock()
+        self._post_json = AsyncMock()
 
 
 class TaskDomainTests(unittest.IsolatedAsyncioTestCase):
@@ -329,6 +330,8 @@ class TaskDomainTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertTrue(result["completed"])
         self.assertEqual(result["total_lines"], 0)
+
+
 
 
 if __name__ == "__main__":

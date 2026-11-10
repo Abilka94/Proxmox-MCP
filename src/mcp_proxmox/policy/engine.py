@@ -41,8 +41,12 @@ class PolicyEngine:
     def authorize(self, policy: ToolPolicy) -> None:
         """Authorize a tool call or raise :class:`PolicyDenied`."""
 
-        if self._config.mode == PolicyMode.READ_ONLY and policy.tier != ToolTier.READ:
+        allowed = {
+            PolicyMode.READ_ONLY: {ToolTier.READ},
+            PolicyMode.OPERATOR: {ToolTier.READ, ToolTier.OPERATOR},
+        }
+        if policy.tier not in allowed.get(self._config.mode, set()):
             raise PolicyDenied(
-                f"Tool {policy.name!r} requires tier {policy.tier.value}, "
-                f"but policy mode is {self._config.mode.value}"
+                f"Инструмент {policy.name!r} требует {policy.tier}; "
+                f"режим политики: {self._config.mode}"
             )

@@ -8,6 +8,7 @@ from typing import Any
 from mcp_proxmox.logging import correlation_context, get_logger
 from mcp_proxmox.mcp.registry.tools import ToolRegistry
 from mcp_proxmox.policy import PolicyDenied, PolicyEngine
+from mcp_proxmox.pve.client.task_validation import TaskCancelInputError
 
 JSON_RPC_VERSION = "2.0"
 DEFAULT_PROTOCOL_VERSION = "2024-11-05"
@@ -59,21 +60,23 @@ class MinimalMcpServer:
                 }
             except McpProtocolError as exc:
                 self._logger.warning(
-                    "protocol_error", extra={"code": exc.code, "message": exc.message}
+                    "protocol_error", extra={"code": exc.code, "detail": exc.message}
                 )
                 if request_id is None:
                     return None
                 return self._error_response(request_id, exc.code, exc.message)
             except PolicyDenied as exc:
-                self._logger.warning("policy_denied", extra={"message": str(exc)})
+                self._logger.warning("policy_denied", extra={"detail": str(exc)})
                 if request_id is None:
                     return None
                 return self._error_response(request_id, -32603, str(exc))
-            except Exception as exc:  # pragma: no cover - defensive boundary
-                self._logger.exception("internal_error")
+            except Exception:  # pragma: no cover - defensive boundary
+                self._logger.error("internal_error")
                 if request_id is None:
                     return None
-                return self._error_response(request_id, -32603, str(exc))
+                return self._error_response(
+                    request_id, -32603, "Внутренняя ошибка выполнения инструмента"
+                )
 
     async def _dispatch(self, method: str, params: dict[str, Any]) -> dict[str, Any]:
         if method == "initialize":
@@ -122,9 +125,15 @@ class MinimalMcpServer:
             raise McpProtocolError(-32601, f"Unknown tool: {tool_name}")
 
         self._policy.authorize(tool.policy)
-        result = await tool.handler(arguments)
+        try:
+            result = await tool.handler(arguments)
+        except TaskCancelInputError as exc:
+            raise McpProtocolError(-32602, str(exc)) from exc
         text = json.dumps(result, ensure_ascii=False, sort_keys=True)
-        self._logger.info("tool_call", extra={"tool": tool.name, "outcome": "ok"})
+        self._logger.info(
+            "tool_call",
+            extra={"tool": tool.name, "outcome": "error" if result.get("error") else "ok"},
+        )
 
         return {
             "content": [

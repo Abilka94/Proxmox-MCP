@@ -1,0 +1,1677 @@
+{
+  "started_at": "2026-11-10T21:49:10.618831+03:00",
+  "requests": [
+    {
+      "time": "2026-11-10T21:49:10.814878+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/version",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.825134+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/cluster/status",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.840897+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/cluster/resources",
+      "query": "type=vm",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.864585+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.889127+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.894712+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/cluster/ha/resources",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.903575+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks",
+      "query": "source=active&limit=500",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.909236+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/access/permissions",
+      "query": "path=%2Fvms%2F301",
+      "http_status": 200
+    },
+    {
+      "time": "2026-11-10T21:49:10.920279+03:00",
+      "phase": "initial_preflight",
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.720266+03:00",
+      "phase": "verify_U0",
+      "case": null,
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.756265+03:00",
+      "duration_seconds": 0.036
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.756801+03:00",
+      "phase": "L1",
+      "case": null,
+      "inside_mcp": true,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.781634+03:00",
+      "duration_seconds": 0.0248
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.783528+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/version",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.796016+03:00",
+      "duration_seconds": 0.0125
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.796270+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.806033+03:00",
+      "duration_seconds": 0.0098
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.806414+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/resources",
+      "query": "type=vm",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.821728+03:00",
+      "duration_seconds": 0.0153
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.821935+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.845779+03:00",
+      "duration_seconds": 0.0238
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.846019+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.866184+03:00",
+      "duration_seconds": 0.0202
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.866483+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/ha/resources",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.871637+03:00",
+      "duration_seconds": 0.0052
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.872004+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks",
+      "query": "source=active&limit=500",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.882490+03:00",
+      "duration_seconds": 0.0105
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.882887+03:00",
+      "phase": "readiness_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/access/permissions",
+      "query": "path=%2Fvms%2F301",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.889405+03:00",
+      "duration_seconds": 0.0065
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.890150+03:00",
+      "phase": "create_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "POST",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/shutdown",
+      "query": "",
+      "http_status": 200,
+      "form": {
+        "timeout": 60,
+        "forceStop": 0
+      },
+      "time_finished": "2026-11-10T21:52:15.921420+03:00",
+      "duration_seconds": 0.0313,
+      "response": {
+        "data": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:"
+      }
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.922610+03:00",
+      "phase": "verify_A",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.942262+03:00",
+      "duration_seconds": 0.0196
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.943084+03:00",
+      "phase": "L2",
+      "case": "A",
+      "inside_mcp": true,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:15.967260+03:00",
+      "duration_seconds": 0.0242
+    },
+    {
+      "time_started": "2026-11-10T21:52:15.967477+03:00",
+      "phase": "L2",
+      "case": "A",
+      "inside_mcp": true,
+      "method": "DELETE",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+      "query": "",
+      "http_status": 200,
+      "body_empty": true,
+      "time_finished": "2026-11-10T21:52:16.994137+03:00",
+      "duration_seconds": 1.0267,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "time_started": "2026-11-10T21:52:16.996862+03:00",
+      "phase": "L3",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.030952+03:00",
+      "duration_seconds": 0.0341
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.031415+03:00",
+      "phase": "L3",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:/log",
+      "query": "start=0&limit=5000",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.061637+03:00",
+      "duration_seconds": 0.0302
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.061952+03:00",
+      "phase": "L3",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.098011+03:00",
+      "duration_seconds": 0.0361
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.098276+03:00",
+      "phase": "L3",
+      "case": "A",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.132632+03:00",
+      "duration_seconds": 0.0344
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.135251+03:00",
+      "phase": "L5",
+      "case": "A",
+      "inside_mcp": true,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.150604+03:00",
+      "duration_seconds": 0.0153
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.154031+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/version",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.170697+03:00",
+      "duration_seconds": 0.0167
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.170954+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.182940+03:00",
+      "duration_seconds": 0.012
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.183300+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/resources",
+      "query": "type=vm",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.208470+03:00",
+      "duration_seconds": 0.0252
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.208830+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.235945+03:00",
+      "duration_seconds": 0.0271
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.236258+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.259916+03:00",
+      "duration_seconds": 0.0237
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.260278+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/cluster/ha/resources",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.267707+03:00",
+      "duration_seconds": 0.0074
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.268038+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks",
+      "query": "source=active&limit=500",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.279016+03:00",
+      "duration_seconds": 0.011
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.279475+03:00",
+      "phase": "readiness_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/access/permissions",
+      "query": "path=%2Fvms%2F301",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.288431+03:00",
+      "duration_seconds": 0.009
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.290032+03:00",
+      "phase": "create_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "POST",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/shutdown",
+      "query": "",
+      "http_status": 200,
+      "form": {
+        "timeout": 60,
+        "forceStop": 0
+      },
+      "time_finished": "2026-11-10T21:52:17.327524+03:00",
+      "duration_seconds": 0.0375,
+      "response": {
+        "data": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:"
+      }
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.329918+03:00",
+      "phase": "verify_B",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.365439+03:00",
+      "duration_seconds": 0.0355
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.367035+03:00",
+      "phase": "L4",
+      "case": "B",
+      "inside_mcp": true,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.391313+03:00",
+      "duration_seconds": 0.0243
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.391644+03:00",
+      "phase": "L4",
+      "case": "B",
+      "inside_mcp": true,
+      "method": "DELETE",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+      "query": "",
+      "http_status": 200,
+      "body_empty": true,
+      "time_finished": "2026-11-10T21:52:17.425137+03:00",
+      "duration_seconds": 0.0335,
+      "response": {
+        "data": null
+      }
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.426838+03:00",
+      "phase": "L4",
+      "case": "B",
+      "inside_mcp": true,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.453711+03:00",
+      "duration_seconds": 0.0269
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.455603+03:00",
+      "phase": "L4_independent",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:/status",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.481205+03:00",
+      "duration_seconds": 0.0256
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.481686+03:00",
+      "phase": "L4_independent",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/tasks/UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:/log",
+      "query": "start=0&limit=5000",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.508245+03:00",
+      "duration_seconds": 0.0266
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.508530+03:00",
+      "phase": "L4_independent",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.543155+03:00",
+      "duration_seconds": 0.0346
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.543462+03:00",
+      "phase": "L4_independent",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/config",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.567606+03:00",
+      "duration_seconds": 0.0241
+    },
+    {
+      "time_started": "2026-11-10T21:52:17.572111+03:00",
+      "phase": "final_READ",
+      "case": "B",
+      "inside_mcp": false,
+      "method": "GET",
+      "path": "/api2/json/nodes/7500T/qemu/301/status/current",
+      "query": "",
+      "http_status": 200,
+      "time_finished": "2026-11-10T21:52:17.598959+03:00",
+      "duration_seconds": 0.0268
+    }
+  ],
+  "preflight": {
+    "version": {
+      "repoid": "4f6e0ac86f9e8c7f",
+      "release": "9.2",
+      "version": "9.2.21"
+    },
+    "cluster": {
+      "cluster": [
+        {
+          "name": "abillka94",
+          "quorate": 1,
+          "nodes": 4
+        }
+      ],
+      "nodes": [
+        {
+          "name": "5800H",
+          "online": 1
+        },
+        {
+          "name": "CeleronG3930",
+          "online": 1
+        },
+        {
+          "name": "7700T",
+          "online": 1
+        },
+        {
+          "name": "7500T",
+          "online": 1
+        }
+      ]
+    },
+    "inventory": [
+      {
+        "vmid": 301,
+        "node": "7500T",
+        "name": "phase1c-cancel-test",
+        "status": "running",
+        "type": "qemu"
+      }
+    ],
+    "vm_status": {
+      "vmid": 301,
+      "name": "phase1c-cancel-test",
+      "status": "running",
+      "qmpstatus": "running",
+      "uptime": 83090,
+      "ha": {
+        "managed": 0
+      }
+    },
+    "vm_config": {
+      "name": "phase1c-cancel-test",
+      "devices": {
+        "ide2": "none,media=cdrom"
+      },
+      "digest": "235c6681ef9e6994e02d687d5420cf94468dee8b",
+      "lock_present": false,
+      "hookscript_present": false
+    },
+    "ha_managed": false,
+    "active_tasks": {
+      "total": 0,
+      "vm301_conflicts": 0
+    },
+    "permissions": {
+      "VM.PowerMgmt": true,
+      "VM.Audit": true
+    },
+    "historical_U0": {
+      "type": "qmshutdown",
+      "exitstatus": "received interrupt",
+      "status": "stopped",
+      "tokenid": "openwebui",
+      "id": "301",
+      "starttime": 1794253680,
+      "user": "ai-agent@pve",
+      "node": "7500T",
+      "pstart": 28285461,
+      "pid": 802098,
+      "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    "verdict": "PASS"
+  },
+  "scenarios": {
+    "L1": {
+      "started_at": "2026-11-10T21:52:15.756468+03:00",
+      "arguments": {
+        "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+        "node": "7500T",
+        "wait": false,
+        "timeout": 20,
+        "poll_interval": 1
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:15.782527+03:00",
+      "call_seconds": 0.0261,
+      "request_range": [
+        10,
+        11
+      ],
+      "mcp_response": {
+        "jsonrpc": "2.0",
+        "id": "phase1c-complete-L1",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"cancel_requested\": false, \"error\": null, \"exitstatus\": \"received interrupt\", \"message\": \"Задача уже завершена; DELETE не отправлен\", \"node\": \"7500T\", \"status\": \"stopped\", \"stopped\": true, \"timed_out\": false, \"upid\": \"UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:\", \"wait_seconds\": 0.0}"
+            }
+          ]
+        }
+      },
+      "result": {
+        "cancel_requested": false,
+        "error": null,
+        "exitstatus": "received interrupt",
+        "message": "Задача уже завершена; DELETE не отправлен",
+        "node": "7500T",
+        "status": "stopped",
+        "stopped": true,
+        "timed_out": false,
+        "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+        "wait_seconds": 0.0
+      }
+    },
+    "L2": {
+      "started_at": "2026-11-10T21:52:15.942789+03:00",
+      "arguments": {
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "node": "7500T",
+        "wait": false,
+        "timeout": 20,
+        "poll_interval": 1
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:16.994986+03:00",
+      "call_seconds": 1.0522,
+      "request_range": [
+        21,
+        23
+      ],
+      "mcp_response": {
+        "jsonrpc": "2.0",
+        "id": "phase1c-complete-L2",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"cancel_requested\": true, \"error\": null, \"exitstatus\": null, \"message\": \"API подтвердил запрос остановки; состояние после запроса не проверялось\", \"node\": \"7500T\", \"status\": \"unknown\", \"stopped\": null, \"timed_out\": false, \"upid\": \"UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:\", \"wait_seconds\": 0.0}"
+            }
+          ]
+        }
+      },
+      "result": {
+        "cancel_requested": true,
+        "error": null,
+        "exitstatus": null,
+        "message": "API подтвердил запрос остановки; состояние после запроса не проверялось",
+        "node": "7500T",
+        "status": "unknown",
+        "stopped": null,
+        "timed_out": false,
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "wait_seconds": 0.0
+      },
+      "polling_inside_tool": false
+    },
+    "L3": {
+      "started_at": "2026-11-10T21:52:16.996620+03:00",
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:17.133851+03:00",
+      "task_after": {
+        "pstart": 36591076,
+        "pid": 1037303,
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "node": "7500T",
+        "starttime": 1794336736,
+        "user": "ai-agent@pve",
+        "id": "301",
+        "tokenid": "openwebui",
+        "type": "qmshutdown",
+        "status": "stopped",
+        "exitstatus": "received interrupt"
+      },
+      "vm_after": {
+        "vmid": 301,
+        "name": "phase1c-cancel-test",
+        "status": "running",
+        "qmpstatus": "running",
+        "uptime": 83276,
+        "ha": {
+          "managed": 0
+        }
+      },
+      "exitstatus": "received interrupt"
+    },
+    "L5": {
+      "started_at": "2026-11-10T21:52:17.134961+03:00",
+      "arguments": {
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "node": "7500T",
+        "wait": false,
+        "timeout": 20,
+        "poll_interval": 1
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:17.150865+03:00",
+      "call_seconds": 0.0159,
+      "request_range": [
+        27,
+        28
+      ],
+      "mcp_response": {
+        "jsonrpc": "2.0",
+        "id": "phase1c-complete-L5",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"cancel_requested\": false, \"error\": null, \"exitstatus\": \"received interrupt\", \"message\": \"Задача уже завершена; DELETE не отправлен\", \"node\": \"7500T\", \"status\": \"stopped\", \"stopped\": true, \"timed_out\": false, \"upid\": \"UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:\", \"wait_seconds\": 0.0}"
+            }
+          ]
+        }
+      },
+      "result": {
+        "cancel_requested": false,
+        "error": null,
+        "exitstatus": "received interrupt",
+        "message": "Задача уже завершена; DELETE не отправлен",
+        "node": "7500T",
+        "status": "stopped",
+        "stopped": true,
+        "timed_out": false,
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "wait_seconds": 0.0
+      }
+    },
+    "L4": {
+      "started_at": "2026-11-10T21:52:17.366741+03:00",
+      "arguments": {
+        "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+        "node": "7500T",
+        "wait": true,
+        "timeout": 20,
+        "poll_interval": 1
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:17.453975+03:00",
+      "call_seconds": 0.0872,
+      "request_range": [
+        38,
+        41
+      ],
+      "mcp_response": {
+        "jsonrpc": "2.0",
+        "id": "phase1c-complete-L4",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"cancel_requested\": true, \"error\": null, \"exitstatus\": \"received interrupt\", \"message\": \"Наблюдается завершение задачи; причина не установлена\", \"node\": \"7500T\", \"status\": \"stopped\", \"stopped\": true, \"timed_out\": false, \"upid\": \"UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:\", \"wait_seconds\": 0.027}"
+            }
+          ]
+        }
+      },
+      "result": {
+        "cancel_requested": true,
+        "error": null,
+        "exitstatus": "received interrupt",
+        "message": "Наблюдается завершение задачи; причина не установлена",
+        "node": "7500T",
+        "status": "stopped",
+        "stopped": true,
+        "timed_out": false,
+        "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+        "wait_seconds": 0.027
+      },
+      "polling_GET_count": 1,
+      "independent_verified": true
+    }
+  },
+  "mutate_counts": {
+    "POST": 2,
+    "DELETE": 2
+  },
+  "initial_policy": "READ_ONLY",
+  "verify_ssl": false,
+  "preflight_finished_at": "2026-11-10T21:49:10.921693+03:00",
+  "policy_after_preflight": "READ_ONLY",
+  "execution_started_at": "2026-11-10T21:52:15.633109+03:00",
+  "case_counts": {
+    "A": {
+      "POST": 1,
+      "DELETE": 1
+    },
+    "B": {
+      "POST": 1,
+      "DELETE": 1
+    }
+  },
+  "guard_blocked": [],
+  "cases": {
+    "A": {
+      "created_at": "2026-11-10T21:52:15.889970+03:00",
+      "post_parameters": {
+        "timeout": 60,
+        "forceStop": 0
+      },
+      "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+      "task_before_cancel": {
+        "tokenid": "openwebui",
+        "id": "301",
+        "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+        "pid": 1037303,
+        "pstart": 36591076,
+        "node": "7500T",
+        "status": "running",
+        "user": "ai-agent@pve",
+        "type": "qmshutdown",
+        "starttime": 1794336736
+      },
+      "identity_running_verified": true,
+      "independent": {
+        "started_at": "2026-11-10T21:52:16.996610+03:00",
+        "observations": [
+          {
+            "time": "2026-11-10T21:52:17.031092+03:00",
+            "task": {
+              "pstart": 36591076,
+              "pid": 1037303,
+              "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:",
+              "node": "7500T",
+              "starttime": 1794336736,
+              "user": "ai-agent@pve",
+              "id": "301",
+              "tokenid": "openwebui",
+              "type": "qmshutdown",
+              "status": "stopped",
+              "exitstatus": "received interrupt"
+            }
+          }
+        ],
+        "task_log": [
+          {
+            "t": "TASK ERROR: received interrupt",
+            "n": 1
+          }
+        ],
+        "vm_after": {
+          "vmid": 301,
+          "name": "phase1c-cancel-test",
+          "status": "running",
+          "qmpstatus": "running",
+          "uptime": 83276,
+          "ha": {
+            "managed": 0
+          }
+        },
+        "config_unchanged": true,
+        "config_digest_after": "235c6681ef9e6994e02d687d5420cf94468dee8b",
+        "finished_at": "2026-11-10T21:52:17.132768+03:00"
+      }
+    },
+    "B": {
+      "created_at": "2026-11-10T21:52:17.289796+03:00",
+      "post_parameters": {
+        "timeout": 60,
+        "forceStop": 0
+      },
+      "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+      "task_before_cancel": {
+        "user": "ai-agent@pve",
+        "status": "running",
+        "type": "qmshutdown",
+        "starttime": 1794336738,
+        "node": "7500T",
+        "pid": 1037305,
+        "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+        "pstart": 36591217,
+        "id": "301",
+        "tokenid": "openwebui"
+      },
+      "identity_running_verified": true,
+      "independent": {
+        "started_at": "2026-11-10T21:52:17.455081+03:00",
+        "observations": [
+          {
+            "time": "2026-11-10T21:52:17.481364+03:00",
+            "task": {
+              "status": "stopped",
+              "exitstatus": "received interrupt",
+              "type": "qmshutdown",
+              "tokenid": "openwebui",
+              "id": "301",
+              "user": "ai-agent@pve",
+              "starttime": 1794336738,
+              "node": "7500T",
+              "pid": 1037305,
+              "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:",
+              "pstart": 36591217
+            }
+          }
+        ],
+        "task_log": [
+          {
+            "t": "TASK ERROR: received interrupt",
+            "n": 1
+          }
+        ],
+        "vm_after": {
+          "vmid": 301,
+          "name": "phase1c-cancel-test",
+          "status": "running",
+          "qmpstatus": "running",
+          "uptime": 83277,
+          "ha": {
+            "managed": 0
+          }
+        },
+        "config_unchanged": true,
+        "config_digest_after": "235c6681ef9e6994e02d687d5420cf94468dee8b",
+        "finished_at": "2026-11-10T21:52:17.567744+03:00"
+      }
+    }
+  },
+  "readiness_rechecks": {
+    "A": {
+      "started_at": "2026-11-10T21:52:15.783252+03:00",
+      "version": {
+        "repoid": "4f6e0ac86f9e8c7f",
+        "release": "9.2",
+        "version": "9.2.21"
+      },
+      "cluster_quorate": true,
+      "vm_status": {
+        "vmid": 301,
+        "name": "phase1c-cancel-test",
+        "status": "running",
+        "qmpstatus": "running",
+        "uptime": 83275,
+        "ha": {
+          "managed": 0
+        }
+      },
+      "config": {
+        "digest": "235c6681ef9e6994e02d687d5420cf94468dee8b",
+        "safe_devices_verified": true,
+        "no_lock_or_hookscript": true
+      },
+      "no_ha": true,
+      "active_tasks": {
+        "total": 0,
+        "vm301_conflicts": 0
+      },
+      "permissions": {
+        "VM.PowerMgmt": true,
+        "VM.Audit": true
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:15.889492+03:00"
+    },
+    "B": {
+      "started_at": "2026-11-10T21:52:17.153831+03:00",
+      "version": {
+        "version": "9.2.21",
+        "release": "9.2",
+        "repoid": "4f6e0ac86f9e8c7f"
+      },
+      "cluster_quorate": true,
+      "vm_status": {
+        "vmid": 301,
+        "name": "phase1c-cancel-test",
+        "status": "running",
+        "qmpstatus": "running",
+        "uptime": 83276,
+        "ha": {
+          "managed": 0
+        }
+      },
+      "config": {
+        "digest": "235c6681ef9e6994e02d687d5420cf94468dee8b",
+        "safe_devices_verified": true,
+        "no_lock_or_hookscript": true
+      },
+      "no_ha": true,
+      "active_tasks": {
+        "total": 0,
+        "vm301_conflicts": 0
+      },
+      "permissions": {
+        "VM.PowerMgmt": true,
+        "VM.Audit": true
+      },
+      "verdict": "PASS",
+      "finished_at": "2026-11-10T21:52:17.288576+03:00"
+    }
+  },
+  "executing_policy": "OPERATOR",
+  "U0_before_L1": {
+    "status": "stopped",
+    "exitstatus": "received interrupt",
+    "type": "qmshutdown",
+    "id": "301",
+    "tokenid": "openwebui",
+    "user": "ai-agent@pve",
+    "starttime": 1794253680,
+    "node": "7500T",
+    "pid": 802098,
+    "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:",
+    "pstart": 28285461
+  },
+  "live_verdict": "PASS",
+  "final_vm": {
+    "vmid": 301,
+    "name": "phase1c-cancel-test",
+    "status": "running",
+    "qmpstatus": "running",
+    "uptime": 83277,
+    "ha": {
+      "managed": 0
+    }
+  },
+  "config_bytes_restored": true,
+  "restored_policy": "READ_ONLY",
+  "restored_operator_denied": true,
+  "restored_readonly_server_instantiated": true,
+  "logs": [
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": "phase1c-complete-L1",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000C3D32%3A01AF9A15%3A6AF22370%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L1",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "preflight",
+      "request_outcome": false,
+      "status": "stopped",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000C3D32:01AF9A15:6AF22370:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-complete-L1",
+      "event": "tool_call",
+      "level": "INFO",
+      "logger": "mcp_proxmox.mcp.server",
+      "outcome": "ok",
+      "tool": "task_cancel"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/version \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/version"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/status"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/resources?type=vm \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/resources"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/ha/resources \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/ha/resources"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks?source=active&limit=500 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/access/permissions?path=%2Fvms%2F301 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/access/permissions"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: POST https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/shutdown \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_post",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/shutdown"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": "phase1c-complete-L2",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L2",
+      "event": "HTTP Request: DELETE https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L2",
+      "event": "pve_delete",
+      "http_status": 200,
+      "kind": null,
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "phase": "delete",
+      "request_outcome": "accepted"
+    },
+    {
+      "correlation_id": "phase1c-complete-L2",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "delete",
+      "request_outcome": true,
+      "status": "unknown",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-complete-L2",
+      "event": "tool_call",
+      "level": "INFO",
+      "logger": "mcp_proxmox.mcp.server",
+      "outcome": "ok",
+      "tool": "task_cancel"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log?start=0&limit=5000 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    },
+    {
+      "correlation_id": "phase1c-complete-L5",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F7%3A022E55E4%3A6AF367E0%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L5",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "preflight",
+      "request_outcome": false,
+      "status": "stopped",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000FD3F7:022E55E4:6AF367E0:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-complete-L5",
+      "event": "tool_call",
+      "level": "INFO",
+      "logger": "mcp_proxmox.mcp.server",
+      "outcome": "ok",
+      "tool": "task_cancel"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/version \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/version"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/status"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/resources?type=vm \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/resources"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/cluster/ha/resources \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/cluster/ha/resources"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks?source=active&limit=500 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/access/permissions?path=%2Fvms%2F301 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/access/permissions"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: POST https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/shutdown \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_post",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/shutdown"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "event": "HTTP Request: DELETE https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "event": "pve_delete",
+      "http_status": 200,
+      "kind": null,
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "phase": "delete",
+      "request_outcome": "accepted"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "delete",
+      "request_outcome": true,
+      "status": "unknown",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "error": null,
+      "event": "task_cancel",
+      "level": "INFO",
+      "logger": "mcp_proxmox.task_cancel",
+      "node": "7500T",
+      "phase": "observe",
+      "request_outcome": true,
+      "status": "stopped",
+      "timed_out": false,
+      "tool": "task_cancel",
+      "upid": "UPID:7500T:000FD3F9:022E5671:6AF367E2:qmshutdown:301:ai-agent@pve!openwebui:"
+    },
+    {
+      "correlation_id": "phase1c-complete-L4",
+      "event": "tool_call",
+      "level": "INFO",
+      "logger": "mcp_proxmox.mcp.server",
+      "outcome": "ok",
+      "tool": "task_cancel"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/status"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log?start=0&limit=5000 \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/tasks/UPID%3A7500T%3A000FD3F9%3A022E5671%3A6AF367E2%3Aqmshutdown%3A301%3Aai-agent%40pve%21openwebui%3A/log"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/config \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/config"
+    },
+    {
+      "correlation_id": null,
+      "event": "HTTP Request: GET https://192.168.0.178:8006/api2/json/nodes/7500T/qemu/301/status/current \"HTTP/1.1 200 OK\"",
+      "level": "INFO",
+      "logger": "httpx"
+    },
+    {
+      "correlation_id": null,
+      "event": "pve_get",
+      "level": "INFO",
+      "logger": "mcp_proxmox.pve.client",
+      "outcome": "ok",
+      "path": "/nodes/7500T/qemu/301/status/current"
+    }
+  ],
+  "execution_finished_at": "2026-11-10T21:52:17.606125+03:00",
+  "local_pytest": {
+    "passed": 272,
+    "failed": 0,
+    "warnings": 1090,
+    "seconds": 6.04,
+    "exit_code": 0
+  },
+  "final_local_verification": {
+    "current_policy": "READ_ONLY",
+    "operator_denied_without_HTTP": true,
+    "evidence_consistency": "PASS",
+    "known_secret_absent": true,
+    "headers_absent": true,
+    "git_counts": {
+      "staged_tracked": 1,
+      "unstaged_tracked": 13,
+      "untracked": 32
+    }
+  }
+}

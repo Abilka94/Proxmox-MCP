@@ -12,11 +12,19 @@ from mcp_proxmox.domains.containers import container_config, container_list, con
 from mcp_proxmox.domains.network import network_list
 from mcp_proxmox.domains.nodes import list_nodes, node_status
 from mcp_proxmox.domains.storage import storage_content, storage_list, storage_status
-from mcp_proxmox.domains.tasks import task_follow, task_list, task_log, task_status, task_wait
+from mcp_proxmox.domains.tasks import (
+    task_cancel,
+    task_follow,
+    task_list,
+    task_log,
+    task_status,
+    task_wait,
+)
 from mcp_proxmox.domains.updates import cluster_updates, node_updates
 from mcp_proxmox.domains.vms import vm_config, vm_list, vm_status
 from mcp_proxmox.policy import ToolPolicy, ToolTier
 from mcp_proxmox.pve.client import PveClient
+from mcp_proxmox.pve.client.task_validation import UPID_PATTERN, TaskCancelInputError
 
 ToolHandler = Callable[[dict[str, Any]], Awaitable[dict[str, Any]]]
 
@@ -42,6 +50,7 @@ ALL_TOOLS = [
     "task_log",
     "task_wait",
     "task_follow",
+    "task_cancel",
 ]
 
 
@@ -240,6 +249,22 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
             pve_client,
             upid,
             node,
+            timeout=params.get("timeout", 120),
+            poll_interval=params.get("poll_interval", 1.0),
+        )
+
+    async def task_cancel_tool(params: dict[str, Any]) -> dict[str, Any]:
+        upid = params.get("upid")
+        node = params.get("node")
+        if set(params) - {"upid", "node", "wait", "timeout", "poll_interval"}:
+            raise TaskCancelInputError("Неизвестные аргументы task_cancel")
+        if not isinstance(upid, str) or not isinstance(node, str):
+            raise TaskCancelInputError("Требуются строковые upid и node")
+        return await task_cancel(
+            pve_client,
+            upid,
+            node=node,
+            wait=params.get("wait", False),
             timeout=params.get("timeout", 120),
             poll_interval=params.get("poll_interval", 1.0),
         )
@@ -601,6 +626,52 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
                 },
                 policy=ToolPolicy(name="task_follow", tier=ToolTier.READ),
                 handler=task_follow_tool,
+            ),
+            ToolDefinition(
+                name="task_cancel",
+                description="Запрос остановки задачи по UPID. "
+                "DELETE принятие и завершение наблюдаются отдельно; причина завершения неизвестна.",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "upid": {
+                            "type": "string",
+                            "description": "Исходный UPID задачи",
+                            "pattern": "^" + UPID_PATTERN + "$",
+                        },
+                        "node": {
+                            "type": "string",
+                            "description": "Нода, совпадающая с UPID",
+                            "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$",
+                        },
+                        "wait": {
+                            "type": "boolean",
+                            "description": (
+                                "Наблюдать завершение после принятия запроса "
+                                "(default false)"
+                            ),
+                            "default": False,
+                        },
+                        "timeout": {
+                            "type": "integer",
+                            "description": "Срок наблюдения в секундах (1–3600, default 120)",
+                            "default": 120,
+                            "minimum": 1,
+                            "maximum": 3600,
+                        },
+                        "poll_interval": {
+                            "type": "number",
+                            "description": "Интервал наблюдения в секундах (0.1–30, default 1.0)",
+                            "default": 1.0,
+                            "minimum": 0.1,
+                            "maximum": 30,
+                        },
+                    },
+                    "required": ["upid", "node"],
+                    "additionalProperties": False,
+                },
+                policy=ToolPolicy(name="task_cancel", tier=ToolTier.OPERATOR),
+                handler=task_cancel_tool,
             ),
         ]
     )

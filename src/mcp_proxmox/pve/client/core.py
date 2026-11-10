@@ -7,9 +7,11 @@ from dataclasses import dataclass
 from typing import Any
 
 import httpx
+from pydantic import ValidationError
 
 from mcp_proxmox.logging import get_logger
 from mcp_proxmox.pve.auth.config import PveAuthConfig
+from mcp_proxmox.pve.client.task_validation import validate_task_identity
 from mcp_proxmox.pve.models.responses import (
     ClusterStatusEntry,
     ClusterUpdateEntry,
@@ -40,6 +42,8 @@ class PveApiError(RuntimeError):
     path: str
     status_code: int | None = None
     details: str | None = None
+    kind: str | None = None
+    request_outcome: str | None = None
 
     def __str__(self) -> str:
         if self.status_code is None:
@@ -251,6 +255,180 @@ class PveClient:
         if not isinstance(payload, list):
             raise PveApiError("Expected list response for task log", path)
         return [TaskLogEntry.model_validate(item) for item in payload]
+
+    async def get_task_status_on_node(self, node: str, upid: str) -> TaskStatus:
+        """Нодальное наблюдение без cluster fallback для mutate-контракта."""
+        validate_task_identity(node, upid)
+        if self._client is None:
+            async with self._make_client() as client:
+                return await PveClient(self._auth, client=client).get_task_status_on_node(
+                    node, upid
+                )
+        path = (
+            f"/nodes/{urllib.parse.quote(node, safe='')}/tasks/"
+            f"{urllib.parse.quote(upid, safe='')}/status"
+        )
+        try:
+            response = await self._client.get(
+                f"{self._auth.base_url}/api2/json{path}",
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": self._auth.authorization_header,
+                },
+                follow_redirects=False,
+            )
+            response.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            code = exc.response.status_code
+            kind = {
+                401: "authentication_failed",
+                403: "permission_denied",
+                404: "resource_not_found",
+                501: "endpoint_unsupported",
+            }.get(code, "api_error")
+            raise PveApiError("Ошибка HTTP при чтении статуса", path, code, kind=kind) from exc
+        except httpx.RequestError as exc:
+            raise PveApiError(
+                "Ошибка транспорта при чтении статуса", path, kind="transport_error"
+            ) from exc
+        try:
+            body = response.json()
+            if not isinstance(body, dict) or not isinstance(body.get("data"), dict):
+                raise ValueError("invalid status envelope")
+            result = TaskStatus.model_validate(body["data"])
+            if result.status not in ("running", "stopped"):
+                raise ValueError("invalid status")
+        except (ValueError, ValidationError) as exc:
+            raise PveApiError(
+                "Некорректный ответ статуса задачи",
+                path,
+                response.status_code,
+                kind="invalid_response",
+            ) from exc
+        return result
+
+    async def stop_task(self, node: str, upid: str) -> None:
+        validate_task_identity(node, upid)
+        path = (
+            f"/nodes/{urllib.parse.quote(node, safe='')}/tasks/{urllib.parse.quote(upid, safe='')}"
+        )
+        await self._delete_json(path, require_null=True)
+
+    async def _delete_json(self, path: str, *, require_null: bool = False) -> Any:
+        if self._client is not None:
+            return await self._send_delete(self._client, path, require_null=require_null)
+        async with self._make_client() as client:
+            return await self._send_delete(client, path, require_null=require_null)
+
+    async def _send_delete(
+        self, client: httpx.AsyncClient, path: str, *, require_null: bool = False
+    ) -> Any:
+        response: httpx.Response | None = None
+        outcome = "unknown"
+        kind: str | None = None
+        try:
+            try:
+                response = await client.delete(
+                    f"{self._auth.base_url}/api2/json{path}",
+                    headers={
+                        "Accept": "application/json",
+                        "Authorization": self._auth.authorization_header,
+                    },
+                    follow_redirects=False,
+                )
+                response.raise_for_status()
+                body = response.json()
+                if not isinstance(body, dict) or "data" not in body:
+                    raise ValueError("invalid DELETE envelope")
+                if require_null and body["data"] is not None:
+                    raise ValueError("invalid DELETE acknowledgement")
+            except httpx.HTTPStatusError as exc:
+                code = exc.response.status_code
+                kind = {
+                    400: "invalid_request",
+                    401: "authentication_failed",
+                    403: "permission_denied",
+                    404: "resource_not_found",
+                    501: "endpoint_unsupported",
+                }.get(code, "http_error")
+                outcome = "rejected" if 400 <= code < 500 or code == 501 else "unknown"
+                raise PveApiError(
+                    "Ошибка HTTP при DELETE", path, code, kind=kind, request_outcome=outcome
+                ) from exc
+            except (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout) as exc:
+                outcome, kind = "not_sent", "transport_not_sent"
+                raise PveApiError(
+                    "DELETE не отправлен", path, kind=kind, request_outcome=outcome
+                ) from exc
+            except httpx.RequestError as exc:
+                kind = "transport_error"
+                raise PveApiError(
+                    "Исход DELETE неизвестен", path, kind=kind, request_outcome=outcome
+                ) from exc
+            except ValueError as exc:
+                kind = "invalid_response"
+                raise PveApiError(
+                    "Некорректный ответ DELETE",
+                    path,
+                    response.status_code if response is not None else None,
+                    kind=kind,
+                    request_outcome=outcome,
+                ) from exc
+            outcome = "accepted"
+            return body["data"]
+        finally:
+            self._logger.info(
+                "pve_delete",
+                extra={
+                    "phase": "delete",
+                    "request_outcome": outcome,
+                    "http_status": response.status_code if response is not None else None,
+                    "kind": kind,
+                },
+            )
+
+    async def _post_json(self, path: str, data: dict[str, Any] | None = None) -> Any:
+        if self._client is not None:
+            return await self._send_post(self._client, path, data)
+        async with self._make_client() as client:
+            return await self._send_post(client, path, data)
+
+    async def _send_post(
+        self,
+        client: httpx.AsyncClient,
+        path: str,
+        data: dict[str, Any] | None,
+    ) -> Any:
+        url = f"{self._auth.base_url}/api2/json{path}"
+
+        try:
+            response = await client.post(
+                url,
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": self._auth.authorization_header,
+                },
+                data=data,
+            )
+            response.raise_for_status()
+            body = response.json()
+        except httpx.HTTPStatusError as exc:
+            details = exc.response.text
+            raise PveApiError(
+                "PVE API request failed", path, exc.response.status_code, details
+            ) from exc
+        except httpx.TimeoutException as exc:
+            raise PveApiError("Таймаут запроса POST", path) from exc
+        except httpx.RequestError as exc:
+            raise PveApiError("Ошибка транспорта POST", path) from exc
+        except ValueError as exc:
+            raise PveApiError("Некорректный JSON в ответе POST", path) from exc
+
+        if not isinstance(body, dict) or "data" not in body:
+            raise PveApiError("PVE API response is missing data", path)
+
+        self._logger.info("pve_post", extra={"path": path, "outcome": "ok"})
+        return body["data"]
 
     async def _get_json(self, path: str, params: dict[str, Any] | None = None) -> Any:
         url = f"{self._auth.base_url}/api2/json{path}"

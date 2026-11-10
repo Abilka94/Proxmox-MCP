@@ -609,6 +609,26 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
         payload = json.loads(response["result"]["content"][0]["text"])
         self.assertIn("error", payload)
 
+    async def test_task_cancel_is_denied_in_read_only(self) -> None:
+        response = await self.server.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 38,
+                "method": "tools/call",
+                "params": {
+                    "name": "task_cancel",
+                    "arguments": {
+                        "upid": "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:",
+                        "node": "pve1",
+                    },
+                },
+            }
+        )
+
+        assert response is not None
+        self.assertIn("error", response)
+        self.assertIn("требует OPERATOR", response["error"]["message"])
+
     # Update tools
 
     async def test_node_updates_returns_updates(self) -> None:
@@ -1013,6 +1033,9 @@ class FakePveClient:
             FakeTaskLogEntry(t="starting backup"),
             FakeTaskLogEntry(t=" [...] 100%", n=42),
         ]
+
+    async def _post_json(self, path: str, data: dict | None = None) -> dict | None:
+        return None
 
 
 class FakeTaskListEntry:

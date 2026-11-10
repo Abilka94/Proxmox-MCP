@@ -17,6 +17,7 @@ class PolicyMode(StrEnum):
     """Supported policy modes for Phase 1A."""
 
     READ_ONLY = "READ_ONLY"
+    OPERATOR = "OPERATOR"
 
 
 class LogFormat(StrEnum):

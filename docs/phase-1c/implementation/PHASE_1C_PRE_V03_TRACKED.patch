@@ -1,0 +1,582 @@
+diff --git a/README.md b/README.md
+index 950aacb..c1720f1 100644
+--- a/README.md
++++ b/README.md
+@@ -105,7 +105,7 @@ AI-оператор инфраструктуры Proxmox VE, реализова
+ - [x] **Phase 1A** — MCP + PVE Core Read (кластер, узлы, ВМ, контейнеры, хранилища, сеть)
+ - [x] **Phase 1B.1** — Task Domain Core (task_list, task_status, task_log, обновления узлов)
+ - [x] **Phase 1B.2** — Task Domain Extended (task_wait, task_follow, опрос, накопление журнала)
+-- [ ] **Phase 1C** — Task Mutate (task_cancel, task_stop, POST-операции)
++- [ ] **Phase 1C** — Task Mutate (`task_cancel`, DELETE; Design v0.3 на review)
+ - [ ] **Phase 2** — Knowledge Foundation (Memory, EntityRef, аннотации)
+ - [ ] **Phase 3** — Service Layer (привязка сервисов к ресурсам)
+ - [ ] **Phase 4** — Diagnostic Operator (проверки работоспособности сервисов)
+@@ -143,6 +143,15 @@ AI-оператор инфраструктуры Proxmox VE, реализова
+ - [Валидация](docs/phase-1b/phase-1b.2/validation/) — проверка подключения + отчёт о валидации
+ - [Приёмка](docs/phase-1b/phase-1b.2/acceptance/) — 1 документ
+ 
++### Phase 1C — Design Revision (не принято)
++
++- [Дизайн v0.3](docs/phase-1c/design/PHASE_1C_DESIGN.md) — контракт `task_cancel`, DELETE, политика OPERATOR
++- [Инженерный отчёт пересмотра](docs/phase-1c/design/PHASE_1C_DESIGN_REVISION_REPORT_v0.3.md) — обоснование, матрицы и план изменений
++- [Независимый аудит Codex](docs/phase-1c/validation/PHASE_1C_CODEX_AUDIT_REPORT.md)
++- [План Live Validation v0.3](docs/phase-1c/validation/PHASE_1C_LIVE_VALIDATION_PLAN.md) — запланированные проверки, не результаты
++
++Реализация v0.3 ожидает отдельного согласования; live-отмена не проверена.
++
+ ### Исторические документы
+ - [Архив](docs/archive/) — аудит кодовой базы, конкурентный анализ, аудит документации, аудит использования reference, обновление README
+ 
+diff --git a/docs/README.md b/docs/README.md
+index aa64a52..0070ad5 100644
+--- a/docs/README.md
++++ b/docs/README.md
+@@ -1,7 +1,7 @@
+ # MCP-Proxmox — Documentation Index
+ 
+ **Текущая фаза:** Phase 1B.2 — ACCEPTED (v0.3.0-phase1b.2)  
+-**Следующая фаза:** Phase 1C — Task Mutate
++**Следующая фаза:** Phase 1C — Task Mutate; Design Revision v0.3 на review, реализация не разрешена
+ 
+ ---
+ 
+@@ -42,9 +42,19 @@
+ | Validation | [LIVE_VALIDATION_REPORT](phase-1b/phase-1b.2/validation/PHASE_1B_2_LIVE_VALIDATION_REPORT.md), [CONNECTIVITY_CHECK](phase-1b/phase-1b.2/validation/PRE_VALIDATION_CONNECTIVITY_CHECK.md) |
+ | Acceptance | [PHASE_1B_2_ACCEPTANCE](phase-1b/phase-1b.2/acceptance/PHASE_1B_2_ACCEPTANCE.md) |
+ 
+-## Phase 1C — Task Mutate *(future)*
++## Phase 1C — Task Mutate: Design Revision v0.3
+ 
+-Docs: `docs/phase-1c/` (placeholder)
++Не принято. Историческая реализация ожидает исправления; v0.3 требует отдельного review. Live Validation не выполнена.
++
++| Подраздел | Документы |
++|-----------|-----------|
++| Comparative Analysis | [Сравнение reference](phase-1c/comparative-analysis/COMPARISON_TASK_MUTATION_2026-06-06.md) — исторический анализ; уточнения в отчёте revision |
++| Gap Analysis | [Исходный gap-анализ](phase-1c/gap-analysis/GAP_ANALYSIS_TASK_MUTATION.md) |
++| Design | [Текущий дизайн v0.3](phase-1c/design/PHASE_1C_DESIGN.md), [снимок v0.2](phase-1c/design/PHASE_1C_DESIGN_v0.2.md), [инженерный отчёт revision](phase-1c/design/PHASE_1C_DESIGN_REVISION_REPORT_v0.3.md) |
++| Implementation | [Исторический Implementation Report](phase-1c/implementation/PHASE_1C_IMPLEMENTATION_REPORT.md) — не подтверждает реализацию v0.3 |
++| Validation | [Аудит Codex](phase-1c/validation/PHASE_1C_CODEX_AUDIT_REPORT.md), [Pre-Validation Report](phase-1c/validation/PRE_VALIDATION_MUTATE_CHECK.md), [план v0.3](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_PLAN.md), [снимок прежнего плана](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_PLAN_v0.2.md) |
++
++Правила этапов: [PROJECT_WORKFLOW_RULES.md](architecture/PROJECT_WORKFLOW_RULES.md).
+ 
+ ## Archive
+ 
+diff --git a/src/mcp_proxmox/domains/tasks/__init__.py b/src/mcp_proxmox/domains/tasks/__init__.py
+index efb54fd..73003c6 100644
+--- a/src/mcp_proxmox/domains/tasks/__init__.py
++++ b/src/mcp_proxmox/domains/tasks/__init__.py
+@@ -1,4 +1,5 @@
+ from mcp_proxmox.domains.tasks.service import (
++    task_cancel,
+     task_follow,
+     task_list,
+     task_log,
+@@ -6,4 +7,4 @@ from mcp_proxmox.domains.tasks.service import (
+     task_wait,
+ )
+ 
+-__all__ = ["task_follow", "task_list", "task_log", "task_status", "task_wait"]
++__all__ = ["task_cancel", "task_follow", "task_list", "task_log", "task_status", "task_wait"]
+diff --git a/src/mcp_proxmox/domains/tasks/service.py b/src/mcp_proxmox/domains/tasks/service.py
+index 35acda6..519e450 100644
+--- a/src/mcp_proxmox/domains/tasks/service.py
++++ b/src/mcp_proxmox/domains/tasks/service.py
+@@ -2,6 +2,9 @@ from __future__ import annotations
+ 
+ import asyncio
+ import time
++import urllib.parse
++
++import httpx
+ 
+ from mcp_proxmox.pve.client import PveClient
+ from mcp_proxmox.pve.client.core import PveApiError
+@@ -247,3 +250,80 @@ async def task_follow(
+             return response
+ 
+         await asyncio.sleep(poll_interval)
++
++
++async def task_cancel(
++    client: PveClient,
++    upid: str,
++    *,
++    node: str,
++    wait: bool = False,
++    timeout: int = 120,
++    poll_interval: float = 1.0,
++) -> dict[str, object]:
++    path = (
++        f"/nodes/{httpx.URL(node).path}/tasks/"
++        f"{urllib.parse.quote(upid, safe='')}/status/stop"
++    )
++
++    try:
++        current = await client.get_task_status(upid, node=node)
++    except PveApiError:
++        current_status = None
++    else:
++        current_status = current.status
++
++    if current_status == "stopped":
++        return {
++            "upid": upid,
++            "node": node,
++            "cancel_requested": False,
++            "stopped": False,
++            "message": "Задача уже завершена",
++        }
++
++    await client._post_json(path)
++
++    if not wait:
++        return {
++            "upid": upid,
++            "node": node,
++            "status": "running",
++            "cancel_requested": True,
++            "stopped": False,
++            "message": "Запрос на остановку задачи отправлен",
++        }
++
++    wait_result = await task_wait(
++        client,
++        upid,
++        node=node,
++        timeout=timeout,
++        poll_interval=poll_interval,
++    )
++
++    if wait_result.get("timed_out"):
++        return {
++            "upid": upid,
++            "node": node,
++            "status": wait_result.get("status", "running"),
++            "cancel_requested": True,
++            "stopped": False,
++            "message": f"Задача не остановилась за {timeout} сек",
++        }
++
++    result: dict[str, object] = {
++        "upid": upid,
++        "node": node,
++        "status": "stopped",
++        "cancel_requested": True,
++        "stopped": True,
++        "message": "Задача остановлена",
++    }
++    exitstatus = wait_result.get("exitstatus")
++    if exitstatus is not None:
++        result["exitstatus"] = exitstatus
++    wait_seconds = wait_result.get("wait_seconds")
++    if wait_seconds is not None:
++        result["wait_seconds"] = wait_seconds
++    return result
+diff --git a/src/mcp_proxmox/mcp/handlers/server.py b/src/mcp_proxmox/mcp/handlers/server.py
+index 53ed99f..ca90aa7 100644
+--- a/src/mcp_proxmox/mcp/handlers/server.py
++++ b/src/mcp_proxmox/mcp/handlers/server.py
+@@ -65,7 +65,7 @@ class MinimalMcpServer:
+                     return None
+                 return self._error_response(request_id, exc.code, exc.message)
+             except PolicyDenied as exc:
+-                self._logger.warning("policy_denied", extra={"message": str(exc)})
++                self._logger.warning("policy_denied", extra={"detail": str(exc)})
+                 if request_id is None:
+                     return None
+                 return self._error_response(request_id, -32603, str(exc))
+diff --git a/src/mcp_proxmox/mcp/registry/tools.py b/src/mcp_proxmox/mcp/registry/tools.py
+index 12c0c91..2682cc0 100644
+--- a/src/mcp_proxmox/mcp/registry/tools.py
++++ b/src/mcp_proxmox/mcp/registry/tools.py
+@@ -12,7 +12,7 @@ from mcp_proxmox.domains.containers import container_config, container_list, con
+ from mcp_proxmox.domains.network import network_list
+ from mcp_proxmox.domains.nodes import list_nodes, node_status
+ from mcp_proxmox.domains.storage import storage_content, storage_list, storage_status
+-from mcp_proxmox.domains.tasks import task_follow, task_list, task_log, task_status, task_wait
++from mcp_proxmox.domains.tasks import task_cancel, task_follow, task_list, task_log, task_status, task_wait
+ from mcp_proxmox.domains.updates import cluster_updates, node_updates
+ from mcp_proxmox.domains.vms import vm_config, vm_list, vm_status
+ from mcp_proxmox.policy import ToolPolicy, ToolTier
+@@ -42,6 +42,7 @@ ALL_TOOLS = [
+     "task_log",
+     "task_wait",
+     "task_follow",
++    "task_cancel",
+ ]
+ 
+ 
+@@ -244,6 +245,22 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
+             poll_interval=params.get("poll_interval", 1.0),
+         )
+ 
++    async def task_cancel_tool(params: dict[str, Any]) -> dict[str, Any]:
++        upid = params.get("upid")
++        node = params.get("node")
++        if not isinstance(upid, str) or not upid:
++            return {"error": "upid is required"}
++        if not isinstance(node, str) or not node:
++            return {"error": "node is required"}
++        return await task_cancel(
++            pve_client,
++            upid,
++            node=node,
++            wait=params.get("wait", False),
++            timeout=params.get("timeout", 120),
++            poll_interval=params.get("poll_interval", 1.0),
++        )
++
+     return ToolRegistry(
+         [
+             ToolDefinition(
+@@ -602,5 +619,43 @@ def create_default_registry(config: AppConfig, pve_client: PveClient | None = No
+                 policy=ToolPolicy(name="task_follow", tier=ToolTier.READ),
+                 handler=task_follow_tool,
+             ),
++            ToolDefinition(
++                name="task_cancel",
++                description="Request cancellation of a running task by UPID. "
++                "Sends stop signal to the PVE task scheduler. "
++                "Use wait=true to block until the task actually stops.",
++                input_schema={
++                    "type": "object",
++                    "properties": {
++                        "upid": {
++                            "type": "string",
++                            "description": "UPID of the task to cancel",
++                        },
++                        "node": {
++                            "type": "string",
++                            "description": "Node where the task is running",
++                        },
++                        "wait": {
++                            "type": "boolean",
++                            "description": "If true, poll until the task stops (default false)",
++                            "default": False,
++                        },
++                        "timeout": {
++                            "type": "integer",
++                            "description": "Maximum seconds to wait when wait=true (default 120, max 3600)",
++                            "default": 120,
++                        },
++                        "poll_interval": {
++                            "type": "number",
++                            "description": "Seconds between status checks when wait=true (default 1.0)",
++                            "default": 1.0,
++                        },
++                    },
++                    "required": ["upid", "node"],
++                    "additionalProperties": False,
++                },
++                policy=ToolPolicy(name="task_cancel", tier=ToolTier.OPERATOR),
++                handler=task_cancel_tool,
++            ),
+         ]
+     )
+diff --git a/src/mcp_proxmox/pve/client/core.py b/src/mcp_proxmox/pve/client/core.py
+index be34802..d92021f 100644
+--- a/src/mcp_proxmox/pve/client/core.py
++++ b/src/mcp_proxmox/pve/client/core.py
+@@ -252,6 +252,37 @@ class PveClient:
+             raise PveApiError("Expected list response for task log", path)
+         return [TaskLogEntry.model_validate(item) for item in payload]
+ 
++    async def _post_json(self, path: str, data: dict[str, Any] | None = None) -> Any:
++        url = f"{self._auth.base_url}/api2/json{path}"
++
++        try:
++            client = self._client or self._make_client()
++            response = await client.post(
++                url,
++                headers={
++                    "Accept": "application/json",
++                    "Authorization": self._auth.authorization_header,
++                },
++                data=data,
++            )
++            response.raise_for_status()
++            body = response.json()
++        except httpx.HTTPStatusError as exc:
++            details = exc.response.text
++            raise PveApiError(
++                "PVE API request failed", path, exc.response.status_code, details
++            ) from exc
++        except httpx.RequestError as exc:
++            raise PveApiError("PVE API transport error", path, details=str(exc)) from exc
++        except httpx.TimeoutException as exc:
++            raise PveApiError("PVE API request timed out", path) from exc
++
++        if not isinstance(body, dict) or "data" not in body:
++            raise PveApiError("PVE API response is missing data", path)
++
++        self._logger.info("pve_post", extra={"path": path, "outcome": "ok"})
++        return body["data"]
++
+     async def _get_json(self, path: str, params: dict[str, Any] | None = None) -> Any:
+         url = f"{self._auth.base_url}/api2/json{path}"
+ 
+diff --git a/tests/unit/test_domain_tasks.py b/tests/unit/test_domain_tasks.py
+index e9c0e4a..c940a54 100644
+--- a/tests/unit/test_domain_tasks.py
++++ b/tests/unit/test_domain_tasks.py
+@@ -3,7 +3,7 @@ from __future__ import annotations
+ import unittest
+ from unittest.mock import AsyncMock
+ 
+-from mcp_proxmox.domains.tasks import task_follow, task_list, task_log, task_status, task_wait
++from mcp_proxmox.domains.tasks import task_cancel, task_follow, task_list, task_log, task_status, task_wait
+ from mcp_proxmox.pve.client.core import PveApiError
+ from mcp_proxmox.pve.models.responses import TaskListEntry, TaskLogEntry, TaskStatus
+ 
+@@ -13,6 +13,7 @@ class MockPveClient:
+         self.get_tasks = AsyncMock()
+         self.get_task_status = AsyncMock()
+         self.get_task_log = AsyncMock()
++        self._post_json = AsyncMock()
+ 
+ 
+ class TaskDomainTests(unittest.IsolatedAsyncioTestCase):
+@@ -331,5 +332,104 @@ class TaskDomainTests(unittest.IsolatedAsyncioTestCase):
+         self.assertEqual(result["total_lines"], 0)
+ 
+ 
++    # --- task_cancel tests ---
++
++    async def test_task_cancel_wait_false_returns_immediately(self) -> None:
++        client = MockPveClient()
++        client.get_task_status.return_value = TaskStatus(status="running")
++        client._post_json.return_value = None
++        upid = "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:"
++
++        result = await task_cancel(client, upid, node="pve1", wait=False)
++
++        self.assertEqual(result["upid"], upid)
++        self.assertEqual(result["cancel_requested"], True)
++        self.assertEqual(result["stopped"], False)
++        self.assertIn("отправлен", result["message"])
++        client._post_json.assert_awaited_once()
++
++    async def test_task_cancel_wait_true_waits_until_stopped(self) -> None:
++        client = MockPveClient()
++        client.get_task_status = AsyncMock(
++            side_effect=[
++                TaskStatus(status="running"),  # pre-cancel check
++                TaskStatus(status="running"),  # task_wait poll 1
++                TaskStatus(status="running"),  # task_wait poll 2
++                TaskStatus(status="stopped", exitstatus="OK"),  # task_wait poll 3 → done
++            ]
++        )
++        client._post_json.return_value = None
++        upid = "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:"
++
++        result = await task_cancel(client, upid, node="pve1", wait=True, timeout=10, poll_interval=0.01)
++
++        self.assertEqual(result["upid"], upid)
++        self.assertEqual(result["cancel_requested"], True)
++        self.assertEqual(result["stopped"], True)
++        self.assertIn("остановлена", result["message"])
++        self.assertIn("wait_seconds", result)
++        client._post_json.assert_awaited_once()
++
++    async def test_task_cancel_already_completed(self) -> None:
++        client = MockPveClient()
++        client.get_task_status.return_value = TaskStatus(status="stopped", exitstatus="OK")
++        upid = "UPID:pve:..."
++
++        result = await task_cancel(client, upid, node="pve1")
++
++        self.assertEqual(result["cancel_requested"], False)
++        self.assertEqual(result["stopped"], False)
++        self.assertIn("завершена", result["message"])
++        client._post_json.assert_not_awaited()
++
++    async def test_task_cancel_timed_out(self) -> None:
++        client = MockPveClient()
++        client.get_task_status = AsyncMock(
++            side_effect=[TaskStatus(status="running")] * 20
++        )
++        client._post_json.return_value = None
++        upid = "UPID:pve:..."
++
++        result = await task_cancel(
++            client, upid, node="pve1", wait=True, timeout=0.01, poll_interval=0.01
++        )
++
++        self.assertEqual(result["cancel_requested"], True)
++        self.assertEqual(result["stopped"], False)
++        self.assertIn("0.01", result["message"])
++
++    async def test_task_cancel_passes_node_to_get_task_status(self) -> None:
++        client = MockPveClient()
++        client.get_task_status.return_value = TaskStatus(status="running")
++        client._post_json.return_value = None
++        upid = "UPID:pve:..."
++
++        await task_cancel(client, upid, node="pve1", wait=False)
++
++        client.get_task_status.assert_awaited_once_with(upid, node="pve1")
++
++    async def test_task_cancel_api_error_on_post(self) -> None:
++        client = MockPveClient()
++        client.get_task_status.return_value = TaskStatus(status="running")
++        client._post_json.side_effect = PveApiError("PVE API request failed", "/path", 500)
++        upid = "UPID:pve:..."
++
++        with self.assertRaises(PveApiError):
++            await task_cancel(client, upid, node="pve1", wait=False)
++
++    async def test_task_cancel_repeated_cancel_returns_already_completed(self) -> None:
++        client = MockPveClient()
++        client.get_task_status.return_value = TaskStatus(status="stopped", exitstatus="OK")
++        upid = "UPID:pve:..."
++
++        result1 = await task_cancel(client, upid, node="pve1", wait=False)
++        self.assertEqual(result1["cancel_requested"], False)
++
++        result2 = await task_cancel(client, upid, node="pve1", wait=False)
++        self.assertEqual(result2["cancel_requested"], False)
++
++        self.assertEqual(client._post_json.await_count, 0)
++
++
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/tests/unit/test_mcp_server.py b/tests/unit/test_mcp_server.py
+index 869ada0..d6af9b9 100644
+--- a/tests/unit/test_mcp_server.py
++++ b/tests/unit/test_mcp_server.py
+@@ -609,6 +609,26 @@ class MinimalMcpServerTests(unittest.IsolatedAsyncioTestCase):
+         payload = json.loads(response["result"]["content"][0]["text"])
+         self.assertIn("error", payload)
+ 
++    async def test_task_cancel_is_denied_in_read_only(self) -> None:
++        response = await self.server.handle_message(
++            {
++                "jsonrpc": "2.0",
++                "id": 38,
++                "method": "tools/call",
++                "params": {
++                    "name": "task_cancel",
++                    "arguments": {
++                        "upid": "UPID:pve:00000001:00000001:00000001:qemcreate:root@pam:",
++                        "node": "pve1",
++                    },
++                },
++            }
++        )
++
++        assert response is not None
++        self.assertIn("error", response)
++        self.assertIn("requires tier OPERATOR", response["error"]["message"])
++
+     # Update tools
+ 
+     async def test_node_updates_returns_updates(self) -> None:
+@@ -1014,6 +1034,9 @@ class FakePveClient:
+             FakeTaskLogEntry(t=" [...] 100%", n=42),
+         ]
+ 
++    async def _post_json(self, path: str, data: dict | None = None) -> dict | None:
++        return None
++
+ 
+ class FakeTaskListEntry:
+     def __init__(
+diff --git a/tests/unit/test_pve_client.py b/tests/unit/test_pve_client.py
+index 95f3ad5..e26c470 100644
+--- a/tests/unit/test_pve_client.py
++++ b/tests/unit/test_pve_client.py
+@@ -528,6 +528,92 @@ class PveClientTests(unittest.IsolatedAsyncioTestCase):
+             "PVEAPIToken=root@pam!mcp-proxmox=secret",
+         )
+ 
++    # --- _post_json tests ---
++
++    async def test_post_json_sends_post_and_returns_data(self) -> None:
++        recorded: list[httpx.Request] = []
++
++        def record(request: httpx.Request) -> httpx.Response:
++            recorded.append(request)
++            return httpx.Response(200, json={"data": {"result": "ok"}})
++
++        transport = httpx.MockTransport(record)
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++            result = await pve_client._post_json("/test/path")
++
++        self.assertEqual(len(recorded), 1)
++        self.assertEqual(recorded[0].method, "POST")
++        self.assertIn("/test/path", str(recorded[0].url))
++        self.assertEqual(result, {"result": "ok"})
++
++    async def test_post_json_sends_data(self) -> None:
++        recorded: list[httpx.Request] = []
++
++        def record(request: httpx.Request) -> httpx.Response:
++            recorded.append(request)
++            return httpx.Response(200, json={"data": None})
++
++        transport = httpx.MockTransport(record)
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++            await pve_client._post_json("/test/path", data={"key": "value"})
++
++        self.assertEqual(len(recorded), 1)
++        self.assertEqual(recorded[0].method, "POST")
++        body = recorded[0].read()
++        self.assertIn(b"key=value", body)
++
++    async def test_post_json_sends_auth_header(self) -> None:
++        recorded: list[httpx.Request] = []
++
++        def record(request: httpx.Request) -> httpx.Response:
++            recorded.append(request)
++            return httpx.Response(200, json={"data": None})
++
++        transport = httpx.MockTransport(record)
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++            await pve_client._post_json("/test/path")
++
++        self.assertEqual(
++            recorded[0].headers.get("authorization"),
++            "PVEAPIToken=root@pam!mcp-proxmox=secret",
++        )
++
++    async def test_post_json_http_error_raises_pve_api_error(self) -> None:
++        transport = httpx.MockTransport(
++            lambda _: httpx.Response(500, text="server error")
++        )
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++
++            with self.assertRaises(PveApiError) as raised:
++                await pve_client._post_json("/test/path")
++
++            self.assertEqual(raised.exception.status_code, 500)
++
++    async def test_post_json_transport_error_raises_pve_api_error(self) -> None:
++        def fail(_: httpx.Request) -> httpx.Response:
++            raise httpx.ConnectError("refused")
++
++        transport = httpx.MockTransport(fail)
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++
++            with self.assertRaises(PveApiError):
++                await pve_client._post_json("/test/path")
++
++    async def test_post_json_missing_data_raises_pve_api_error(self) -> None:
++        transport = httpx.MockTransport(
++            lambda _: httpx.Response(200, json={"unexpected": []})
++        )
++        async with httpx.AsyncClient(transport=transport) as client:
++            pve_client = PveClient(auth(), client=client)
++
++            with self.assertRaises(PveApiError):
++                await pve_client._post_json("/test/path")
++
+ 
+ def auth(verify_ssl: bool = True) -> PveAuthConfig:
+     return PveAuthConfig(

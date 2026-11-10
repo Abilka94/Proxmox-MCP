@@ -1,7 +1,8 @@
 # MCP-Proxmox — Documentation Index
 
-**Текущая фаза:** Phase 1B.2 — ACCEPTED (v0.3.0-phase1b.2)  
-**Следующая фаза:** Phase 1C — Task Mutate
+**Текущая фаза:** Phase 1C — **ACCEPTED WITH LIMITATIONS**, локальный релиз **v0.4.0-phase1c**, Closure 2026-11-10
+
+**Следующий шаг:** публикация коммита и тега только после отдельного разрешения; push не выполнялся, следующая Phase не начата
 
 ---
 
@@ -42,9 +43,34 @@
 | Validation | [LIVE_VALIDATION_REPORT](phase-1b/phase-1b.2/validation/PHASE_1B_2_LIVE_VALIDATION_REPORT.md), [CONNECTIVITY_CHECK](phase-1b/phase-1b.2/validation/PRE_VALIDATION_CONNECTIVITY_CHECK.md) |
 | Acceptance | [PHASE_1B_2_ACCEPTANCE](phase-1b/phase-1b.2/acceptance/PHASE_1B_2_ACCEPTANCE.md) |
 
-## Phase 1C — Task Mutate *(future)*
+## Phase 1C — Task Mutate: ACCEPTED WITH LIMITATIONS
 
-Docs: `docs/phase-1c/` (placeholder)
+**Phase 1C v0.4.0 — локальный релиз, ACCEPTED WITH LIMITATIONS.** FA-01–FA-04 RESOLVED, 272 теста проходят, полный Live L1–L5 PASS. Пользовательская инструкция: [корневой README](../README.md), включая task_cancel, параметры и два режима READ_ONLY/OPERATOR. ADMIN — уровень инструментов, не режим конфигурации. Исторические потенциальные credentials остаются UNVERIFIED; Ruff/mypy baseline и прочие ограничения документированы. Рабочий READ_ONLY сохранён; исторические отчёты не переписываются. Push не выполнялся.
+
+| Подраздел | Документы |
+|-----------|-----------|
+| Comparative Analysis | [Сравнение reference](phase-1c/comparative-analysis/COMPARISON_TASK_MUTATION_2026-06-06.md) — исторический анализ; уточнения в отчёте revision |
+| Gap Analysis | [Исходный gap-анализ](phase-1c/gap-analysis/GAP_ANALYSIS_TASK_MUTATION.md) |
+| Design | [Текущий дизайн v0.3](phase-1c/design/PHASE_1C_DESIGN.md), [снимок v0.2](phase-1c/design/PHASE_1C_DESIGN_v0.2.md), [инженерный отчёт revision](phase-1c/design/PHASE_1C_DESIGN_REVISION_REPORT_v0.3.md) |
+| Implementation | [Implementation v0.3](phase-1c/implementation/PHASE_1C_IMPLEMENTATION_REPORT.md), [история v0.2](phase-1c/implementation/PHASE_1C_IMPLEMENTATION_REPORT_v0.2.md), [исходный tracked diff](phase-1c/implementation/PHASE_1C_PRE_V03_TRACKED.patch) |
+| Review | [Final Implementation Review v0.3](phase-1c/review/PHASE_1C_FINAL_IMPLEMENTATION_REVIEW.md) — подтверждённые замечания и окончательный пакет исправлений |
+| Remediation | [Final Remediation FR-01–FR-03](phase-1c/implementation/PHASE_1C_FINAL_REMEDIATION_REPORT.md) — изменения, доказательства закрытия и результаты локальных проверок |
+| Live Validation Stage A | [Отчёт этапа A](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_STAGE_A_REPORT.md) — среда, READ-диагностика, права и условия допуска к B |
+| Connectivity Recheck | [Повторная READ-диагностика](phase-1c/validation/PHASE_1C_PVE_CONNECTIVITY_RECHECK_REPORT.md) — HTTP 200, PVE 9.2.21, четыре online-ноды и эффективные права |
+| Test Task Selection | [Выбор тестовой задачи](phase-1c/validation/PHASE_1C_TEST_TASK_SELECTION_REPORT.md) — READ-состояние 7500T, сравнение кандидатов и условный сценарий B; 5800H только резерв, CeleronG3930/7700T запрещены для тестовых изменений |
+| Administrator Check | [Проверка прав и VM 301](phase-1c/validation/PHASE_1C_ADMINISTRATOR_PERMISSIONS_CHECK_REPORT.md) — 2026-11-09: Administrator/privsep/VM.PowerMgmt подтверждены, VM stopped, READ_ONLY сохранён |
+| VM301 Diagnostics | [Диагностика остановки VM 301](phase-1c/validation/PHASE_1C_VM301_STOP_DIAGNOSTIC_REPORT.md) — task/syslog/RRD, загрузка ноды 6 ноября и границы достоверности вывода |
+| Live Validation B | [Отчёт одного теста](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_STAGE_B_REPORT.md), [безопасные evidence](phase-1c/validation/PHASE_1C_STAGE_B_EVIDENCE.json) — PASS, один POST/DELETE, VM running, READ_ONLY восстановлен |
+| Acceptance | [Final Acceptance Report](phase-1c/acceptance/PHASE_1C_FINAL_ACCEPTANCE_REPORT.md) — REJECTED; матрица требований, фактические проверки, security/Git findings и условия завершения |
+| Remediation FA-01 / FA-02 | [Отчёт удаления диагностических скриптов](phase-1c/acceptance/PHASE_1C_FA01_FA02_REMEDIATION_REPORT.md) — оба findings RESOLVED в согласованном объёме; зависимости, секреты, полный pytest и остаточные риски |
+| Security Remediation 19.3 | [Отчёт обезличивания S2/S4](phase-1c/acceptance/PHASE_1C_SECURITY_REMEDIATION_19_3_REPORT.md) — SANITIZED в рабочем документе/index, история не изменена; повторный scan и pytest |
+| Combined Remediation FA-03 / FA-04 | [Инженерный отчёт и повторная Acceptance](phase-1c/acceptance/PHASE_1C_FA03_FA04_COMBINED_REMEDIATION_REPORT.md) — FA-04 RESOLVED, FA-03 PARTIALLY RESOLVED, REJECTED |
+| Remaining Live Scenarios | [План оставшихся L1–L5](phase-1c/validation/PHASE_1C_REMAINING_LIVE_SCENARIOS_PLAN.md) — спецификация выполненного пакета; новое выполнение требует нового разрешения |
+| Complete Live Validation | [Отчёт L1–L5](phase-1c/validation/PHASE_1C_COMPLETE_LIVE_VALIDATION_REPORT.md), [JSON evidence](phase-1c/validation/PHASE_1C_COMPLETE_LIVE_VALIDATION_EVIDENCE.json) — все PASS; 2 POST/2 DELETE, VM running, READ_ONLY восстановлен; не Final Acceptance |
+| Final Acceptance & Closure | [Итоговый Closure Report](phase-1c/acceptance/PHASE_1C_CLOSURE_REPORT.md) — ACCEPTED WITH LIMITATIONS; FA-01–FA-04 RESOLVED, утверждённый manifest из 47 файлов, v0.4.0-phase1c |
+| Validation | [Аудит Codex](phase-1c/validation/PHASE_1C_CODEX_AUDIT_REPORT.md), [Pre-Validation Report](phase-1c/validation/PRE_VALIDATION_MUTATE_CHECK.md), [план v0.3](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_PLAN.md), [снимок прежнего плана](phase-1c/validation/PHASE_1C_LIVE_VALIDATION_PLAN_v0.2.md) |
+
+Правила этапов: [PROJECT_WORKFLOW_RULES.md](architecture/PROJECT_WORKFLOW_RULES.md).
 
 ## Archive
 

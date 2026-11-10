@@ -528,6 +528,92 @@ class PveClientTests(unittest.IsolatedAsyncioTestCase):
             "PVEAPIToken=root@pam!mcp-proxmox=secret",
         )
 
+    # --- _post_json tests ---
+
+    async def test_post_json_sends_post_and_returns_data(self) -> None:
+        recorded: list[httpx.Request] = []
+
+        def record(request: httpx.Request) -> httpx.Response:
+            recorded.append(request)
+            return httpx.Response(200, json={"data": {"result": "ok"}})
+
+        transport = httpx.MockTransport(record)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            result = await pve_client._post_json("/test/path")
+
+        self.assertEqual(len(recorded), 1)
+        self.assertEqual(recorded[0].method, "POST")
+        self.assertIn("/test/path", str(recorded[0].url))
+        self.assertEqual(result, {"result": "ok"})
+
+    async def test_post_json_sends_data(self) -> None:
+        recorded: list[httpx.Request] = []
+
+        def record(request: httpx.Request) -> httpx.Response:
+            recorded.append(request)
+            return httpx.Response(200, json={"data": None})
+
+        transport = httpx.MockTransport(record)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            await pve_client._post_json("/test/path", data={"key": "value"})
+
+        self.assertEqual(len(recorded), 1)
+        self.assertEqual(recorded[0].method, "POST")
+        body = recorded[0].read()
+        self.assertIn(b"key=value", body)
+
+    async def test_post_json_sends_auth_header(self) -> None:
+        recorded: list[httpx.Request] = []
+
+        def record(request: httpx.Request) -> httpx.Response:
+            recorded.append(request)
+            return httpx.Response(200, json={"data": None})
+
+        transport = httpx.MockTransport(record)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+            await pve_client._post_json("/test/path")
+
+        self.assertEqual(
+            recorded[0].headers.get("authorization"),
+            "PVEAPIToken=root@pam!mcp-proxmox=secret",
+        )
+
+    async def test_post_json_http_error_raises_pve_api_error(self) -> None:
+        transport = httpx.MockTransport(
+            lambda _: httpx.Response(500, text="server error")
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+
+            with self.assertRaises(PveApiError) as raised:
+                await pve_client._post_json("/test/path")
+
+            self.assertEqual(raised.exception.status_code, 500)
+
+    async def test_post_json_transport_error_raises_pve_api_error(self) -> None:
+        def fail(_: httpx.Request) -> httpx.Response:
+            raise httpx.ConnectError("refused")
+
+        transport = httpx.MockTransport(fail)
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+
+            with self.assertRaises(PveApiError):
+                await pve_client._post_json("/test/path")
+
+    async def test_post_json_missing_data_raises_pve_api_error(self) -> None:
+        transport = httpx.MockTransport(
+            lambda _: httpx.Response(200, json={"unexpected": []})
+        )
+        async with httpx.AsyncClient(transport=transport) as client:
+            pve_client = PveClient(auth(), client=client)
+
+            with self.assertRaises(PveApiError):
+                await pve_client._post_json("/test/path")
+
 
 def auth(verify_ssl: bool = True) -> PveAuthConfig:
     return PveAuthConfig(
